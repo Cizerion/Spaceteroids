@@ -1203,7 +1203,8 @@ public class GameMain extends Application {
 			Text about = new Text(60, 200, "\tHello everyone!\n\n\tMy name is Stanislav Shergin (aka Claner). Thanks for playing this game!"
 					+ " This is my \"Java skill researching\" project named as \"SP/ACE\\TEROIDS\". Game was grown through "
 					+ "my Java learning interests and Java FX framework. For this projects i took free visual and sound game assets from different "
-					+ "authors on different sites. All authors with appropriate links were specified in CREDITS.TXT file on my GitHub repository [HERE WILL BE LINK SOON]."
+					+ "authors on different sites. All authors with appropriate links were specified in CREDITS.TXT file in my GitHub repository https://github.com/Cizerion/Spaceteroids"
+					+ " or into \".jar\" file. "
 					+ "\"SP/ACE\\TEROIDS\" is not commercial project and actually it has only studying Java and portfolio creating aims. "
 					+ "Thanks to all who noticed this project!\n\n"
 					+ "\tWith best regards, Stanislav.\n\nSP/ACE\\TEROIDS " + gameVersion);
