@@ -1,0 +1,39 @@
+Thanks to all creators and authors of images, sounds and musics. Here is all what were used in this project:
+
+Images:
+
+asteroids - (Actions: resized) - [Author: phaelax, Link: https://opengameart.org/content/asteroids];
+background -> paralax stars (Actions: clipped, resized) - [Author: DinVStudio, Link: https://dinvstudio.itch.io/dynamic-space-background-lite-free];
+background -> space seamless background (Actions: clipped, resized, recolored) - [Author: JaeLin, Link: https://imgur.com/gallery/0FVqQGd];
+background -> preloader (Actions: clipped, resized) - [Author: wewewegrafikbaydeh, Link: https://pixabay.com/ru/illustrations/синий-небо-ночь-романтические-259458/];
+boss -> (Actions: resized, h. flipped) - [Author: bevouliin.com, Link: https://opengameart.org/content/missile-enemy-game-character];
+boss -> claw (Actions: resized) - [Author: bevouliin.com, Link: https://opengameart.org/content/game-asset-cruncher-enemy-game-character-sprite-sheets];
+boss -> shield (Actions: resized, h. flipped) - [Author: Bonsaiheldin, Link: https://opengameart.org/content/shield-effect];
+buttons -> keyboard (Actions: clipped, resized, recolored) - [Author: Rallix, Link: https://opengameart.org/content/keyboard-keys-1];
+buttons -> menu (Actions: resized, recolored) - [Author: CraftPix.net 2D Game Assets, Link: https://opengameart.org/content/buttons-2d-game-items];
+spaceship, enemies - (Actions: resized, recolored, h. flipped) - [Author: Gamedevtuts, Link: https://opengameart.org/content/simple-shoot-em-up-sprites-spaceship-starscape-ufo-0];
+explosions - (Actions: resized) - [Author: Sinestesia, Link: https://opengameart.org/content/2d-explosion-animations-frame-by-frame];
+hit - (Actions: resized) - [Author: Sinestesia, Link: https://opengameart.org/content/hit-animation-frame-by-frame];
+heart, healthbar - (Actions: resized, recolored, combined in picture) - [Author: DontMind8, Link: https://opengameart.org/content/heart-pixel-art];
+laser, enemy laser, reloadbar - (Actions: resized, recolored, h. flipped, combined in picture) - [Author: unknown, Link: http://pluspng.com/img-png/gun-bullets-black-background-stock-images-royaltyfree-1280.png];
+logo - (Actions: resized, recolored, combined in picture) - [Author: Free Game Assets (GUI, Sprite, Tilesets), Link: https://free-game-assets.itch.io/free-space-objects-icons];
+
+Sounds (no changes):
+
+hit sound, taking boost sound, firing sound - [Author: Jesus Lastra, Link: https://jalastram.itch.io/500-sound-effects];
+explosions -> hit - [Author: Unnamed, Link: https://opengameart.org/content/9-explosion-sounds];
+explosions -> entities, boss - [Author: Michel Baradari, Link: Sounds (c) by Michel Baradari apollo-music.de 
+
+Licensed under CC BY 3.0 http://creativecommons.org/licenses/by/3.0/
+
+Hosted on opengameart.org
+];
+
+Music (no changes):
+
+menu - [Author: Hitctr, Link: https://opengameart.org/content/beyond-the-stars-ambient];
+boss - [Author: tcarisland, Link: https://opengameart.org/content/boss-theme-1];
+preloader - [Author: Goose Ninja, Link: https://gooseninja.itch.io/space-music-pack];
+lose - [Author: CleytonKauffman, Link: https://opengameart.org/content/game-over-theme];
+game - [Author: Hitctrl, Link: https://opengameart.org/content/outoftime];
+win - [Author: p0ss, Link: https://opengameart.org/content/wind-music-futuristic-atmospheric].

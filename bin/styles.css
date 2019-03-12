@@ -1,0 +1,193 @@
+.button {	
+	-fx-background-color: 
+        linear-gradient(#ffd65b, #e68400),
+        linear-gradient(#ffef84, #f2ba44),
+        linear-gradient(#ffea6a, #efaa22),
+        linear-gradient(#ffe657 0%, #f8c202 50%, #eea10b 100%),
+        linear-gradient(from 0% 0% to 15% 50%, rgba(255,255,255,0.9), rgba(255,255,255,0));
+    -fx-background-radius: 30;
+    -fx-background-insets: 0,1,2,3,0;
+    -fx-background-image: url("images/buttons/button20.png");
+    -fx-background-repeat: stretch;   
+    -fx-background-size: 160 100;
+    -fx-background-position: center center;
+    -fx-text-fill: #654b00;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-padding: 10 20 10 20;
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );
+}
+
+.button:hover {	
+	-fx-background-color: 
+        linear-gradient(#FFE084, #F3A53D),
+        linear-gradient(#FFF3A3, #F9CD72),
+        linear-gradient(#FFEF8F, #F7C158),
+        linear-gradient(#FFEC81 0%, #FCD340 50%, #F7BB46 100%),
+        linear-gradient(from 0% 0% to 15% 50%, rgba(255,255,255,0.9), rgba(255,255,255,0));
+    -fx-background-radius: 30;
+    -fx-background-insets: 0,1,2,3,0;
+    -fx-background-image: url("images/buttons/button21.png");
+    -fx-background-repeat: stretch;   
+    -fx-background-size: 160 100;
+    -fx-text-fill: #B2902D;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-padding: 10 20 10 20;
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );
+}
+
+.button:pressed {
+ 	 -fx-background-color: 
+        linear-gradient(#FFE084, #F3A53D),
+        linear-gradient(#FFF3A3, #F9CD72),
+        linear-gradient(#FFEF8F, #F7C158),
+        linear-gradient(#FFEC81 0%, #FCD340 50%, #F7BB46 100%),
+        linear-gradient(from 0% 0% to 15% 50%, rgba(255,255,255,0.9), rgba(255,255,255,0));
+    -fx-background-radius: 30;
+    -fx-background-insets: 0,10,20,30,10;
+    -fx-background-image: url("images/buttons/button20.png");
+    -fx-background-repeat: stretch;   
+    -fx-background-size: 155 95;
+    -fx-text-fill: #99791A;
+    -fx-font-weight: bold;
+    -fx-font-size: 13.5px;
+    -fx-padding: 10 20 10 20;
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );
+}
+
+.label {
+	-fx-text-fill: #ffd633;
+	-fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );
+}
+
+.check-box .text{
+	-fx-font: 14px System;
+	-fx-font-weight: bold;
+    -fx-fill: #fecd0c;
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.8) , 10, 10.0 , 0 , 0);
+}
+
+.check-box .box {
+	-fx-background-color: #fecd0c;
+	-fx-border-color: black;
+	-fx-border-radius: 2px; 
+	-fx-padding: 0.40em;
+}
+
+.check-box:selected .mark {
+	-fx-background-color: #654b00;
+	-fx-padding: 0.45em;
+	-fx-shape:"M14.596,2.055L12.455,0C9.687,2.884,6.011,6.714,5.158,7.602L2.055,4.624L0,6.765l5.242,5.037l0.003-0.004
+    l0.003,0.004L14.596,2.055z";
+    -fx-scale-x: 1.45;
+    -fx-scale-y: 1.45;
+}
+
+.check-box:selected .box {
+	-fx-background-color: #fecd0c;
+}
+
+.progress-bar {
+    -fx-background-radius: 10, 10, 10, 10;
+}
+ 
+.progress-bar .track{
+    -fx-background-color: #373737;
+}
+ 
+.text-field {
+	-fx-background-color: 
+        linear-gradient(#ffd65b, #e68400),
+        linear-gradient(#ffef84, #f2ba44),
+        linear-gradient(#ffea6a, #efaa22),
+        linear-gradient(#ffe657 0%, #f8c202 50%, #eea10b 100%),
+        linear-gradient(from 0% 0% to 15% 50%, rgba(255,255,255,0.9), rgba(255,255,255,0));
+    -fx-background-radius: 30;
+    -fx-background-insets: 0,1,2,3,1;
+    -fx-background-repeat: stretch;   
+    -fx-background-size: 160 100;
+    -fx-background-position: center center;
+    -fx-text-fill: #654b00;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-padding: 10 20 10 20;
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );
+    -fx-prompt-text-fill: #c49300
+}
+
+.progress-bar .bar { 
+    -fx-background-color: #fecd0c;
+}
+
+.context-menu {
+  	-fx-background-color: #585858;
+  	-fx-text-fill: white;
+}
+
+.menu-item .label {
+  	-fx-text-fill: #fecd0c;
+}
+
+.menu-item:focused {
+	-fx-background-color: #313131;
+}
+
+.menu-item:focused .label {
+  	-fx-text-fill: white;
+}
+
+#console {
+	-fx-background-color: none;
+    -fx-background-radius: none;
+    -fx-background-insets: none;
+    -fx-background-repeat: none;
+    -fx-background-size: none;
+    -fx-background-position: none;
+    -fx-font-weight: none;
+    -fx-padding: 10, 0, 0, 0;
+    -fx-prompt-text-fill: #949494;
+	-fx-text-fill: #949494;
+    -fx-font-size: 14px;
+}
+
+#score .text {
+	-fx-font: 24px System;
+	-fx-font-weight: bold;
+    -fx-fill: #fed32c;
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 4, 4.0 , 0 , 1 );
+}
+
+#gametext {
+	-fx-font: 14px System;
+	-fx-font-weight: bold;
+    -fx-fill: #fecd0c;
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.8) , 10, 10.0 , 0 , 0);
+}
+
+#gamename {
+	-fx-font: 63px System;
+	-fx-font-weight: bold;
+    -fx-fill: #fff200;
+    -fx-stroke: #FFA80A;
+    -fx-stroke-width: 3;
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 8, 8.0 , 0 , 0 );
+}
+
+#gamemenu{
+	-fx-font: 26px System;
+	-fx-font-weight: bold;
+    -fx-fill: #fff200;
+    -fx-stroke: #FFA80A;
+    -fx-stroke-width: 1;
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.8) , 10, 10.0 , 0 , 0);
+}
+
+#scoreboard {
+	-fx-font: 18px System;
+	-fx-font-weight: bold;
+    -fx-fill: #fecd0c;
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.8) , 10, 10.0 , 0 , 0);
+}
