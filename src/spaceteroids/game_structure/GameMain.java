@@ -981,7 +981,7 @@ public class GameMain extends Application {
 				}
 				// timer for game events
 				checkTimer.setDoubleValue(checkTimer.getDoubleValue() + 0.02);
-				if(checkTimer.getDoubleValue() >= 218 && checkTimer.getDoubleValue() <= 218.02)
+				if(checkTimer.getDoubleValue() >= 217 && checkTimer.getDoubleValue() <= 217.02)
 					bossStage.setBooleanValue(true);
 				
 		        // render and update sprites

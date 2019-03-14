@@ -12,6 +12,8 @@ public class ASEnemySpaceship extends AnimatedSprite {
 	private int trajectory;
 	private int healthAtStart;
 	private double coef;
+	private static double laserVelocityX = -100;
+	private static double enemyVelocityX = -20;
 		
 	public ASEnemySpaceship(int hlth, double minX, double minY, double maxX, double maxY) {
 		super();
@@ -39,8 +41,8 @@ public class ASEnemySpaceship extends AnimatedSprite {
 	}
 	
 	public void setTrajectory() {
-		if(trajectory == 0) setVelocity(-30, Math.sin(coef) * 20);
-		else setVelocity(-30, Math.cos(coef) * 20);
+		if(trajectory == 0) setVelocity(enemyVelocityX, Math.sin(coef) * 20);
+		else setVelocity(enemyVelocityX, Math.cos(coef) * 20);
 	}
 	
 	public int getTrajectory() {
@@ -53,11 +55,10 @@ public class ASEnemySpaceship extends AnimatedSprite {
 	
 	public static void setDefaultEnemyVelocity(ArrayList<ASEnemySpaceship> enemyList) {
 		for(ASEnemySpaceship enemyTemp: enemyList) {
-			double velocity = -30;
-			if(enemyTemp.getTrajectory() == 0) enemyTemp.setVelocity(velocity, Math.sin(enemyTemp.getCoef()) * 20);
-			else enemyTemp.setVelocity(velocity, Math.cos(enemyTemp.getCoef()) * 20);
+			if(enemyTemp.getTrajectory() == 0) enemyTemp.setVelocity(enemyVelocityX, Math.sin(enemyTemp.getCoef()) * 20);
+			else enemyTemp.setVelocity(enemyVelocityX, Math.cos(enemyTemp.getCoef()) * 20);
 			for(Sprite tempLaser: enemyTemp.getLaserList())
-				tempLaser.setVelocity(-150, 0);
+				tempLaser.setVelocity(laserVelocityX, 0);
 		}
 	}
 
@@ -81,14 +82,14 @@ public class ASEnemySpaceship extends AnimatedSprite {
 	
 	public void laserFireLogic() {
 		setTime(getTime() + 1);
-		if(laserList.size() < 5 && getTime() >= 40 && getPositionX() <= 560) {
-			laserList.add(new Sprite("images/laser/laser-inv.png", 22, 5, false, false, getPositionX() + 5, getPositionY() + 13, -150, 0));
+		if(laserList.size() < 5 && getTime() >= 100 && getPositionX() <= 560) {
+			laserList.add(new Sprite("images/laser/laser-inv.png", 22, 5, true, true, getPositionX() + 5, getPositionY() + 13, laserVelocityX, 0));
 			setTime(0);
 		}
 		Iterator<Sprite> laserIter = laserList.iterator();
 		while(laserIter.hasNext()){
         	Sprite tempLaser = laserIter.next();
-        	if(tempLaser.getPositionX() <= (- 40))
+        	if(tempLaser.getPositionX() <= -30)
         		laserIter.remove();
 		}
 	}
@@ -111,7 +112,7 @@ public class ASEnemySpaceship extends AnimatedSprite {
 	public void render(double time, GraphicsContext gc) {
 		for(Sprite tempLaser: laserList)
 			tempLaser.render(gc);
-		gc.fillRect(getPositionX(), getPositionY() - 6, (getWidth() - 26) * (getHealth() / (double) healthAtStart), 2);
+		gc.fillRect(getPositionX(), getPositionY() - 6, (getWidth() - 26) * (getHealth() / (double) healthAtStart), 3);
 		getFrame(time).render(gc);
 	}
 	
@@ -121,7 +122,7 @@ public class ASEnemySpaceship extends AnimatedSprite {
 			tempLaser.update(0.06);
 			tempLaser.render(gc);
 		}
-		gc.fillRect(getPositionX(), getPositionY() - 6, (getWidth() - 26) * (getHealth() / (double) healthAtStart), 2);
+		gc.fillRect(getPositionX(), getPositionY() - 6, (getWidth() - 26) * (getHealth() / (double) healthAtStart), 3);
 		update(0.06);
 		getFrame(time).render(gc);
 	}

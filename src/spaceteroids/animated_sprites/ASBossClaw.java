@@ -70,7 +70,7 @@ public class ASBossClaw extends AnimatedSprite {
 				}
 			}
 		} else if(counter == 3)	setVelocity(-20, 0);
-		else if(getPositionX() >= 400) {
+		else if(getPositionX() >= 375) {
 				setVelocity(-90, Math.random() * 90);
 				enemies.add(new ASEnemySpaceship(50, getPositionX() + 50, getPositionY() + 70, 0, 0));
 				enemies.add(new ASEnemySpaceship(50, getPositionX() + 50, getPositionY() + 70, 0, 0));

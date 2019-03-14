@@ -492,7 +492,7 @@ public class CollisionDetection extends Thread {
 						}
 						// generation new enemies and asteroids
 						if(checkTimer.getDoubleValue() <= 200) {
-							if((int)(checkTimer.getDoubleValue()) >= 1 && (int)(checkTimer.getDoubleValue()) % 20 == 0)
+							if((int)(checkTimer.getDoubleValue()) >= 1 && (int)(checkTimer.getDoubleValue()) % 25 == 0)
 								enemyEntityCount += 0.0201;
 							if(checkTimer.getDoubleValue() >= 60.5 && checkTimer.getDoubleValue() < 60.57)
 								largeAsteroidList.add(Asteroids.randomAsteroid("large" , WIDTH, 100, WIDTH, 400));
@@ -509,7 +509,7 @@ public class CollisionDetection extends Thread {
 						}
 					}
 					catch (IllegalStateException ile) {
-						System.out.println("One shoted 2 asteroids");
+						System.out.println("2 asteroids were shoted by 1 laser");
 					}
 					catch (Exception e) {
 						e.printStackTrace();
