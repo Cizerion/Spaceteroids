@@ -1200,7 +1200,7 @@ public class GameMain extends Application {
 			tip.setId("gamemenu");
 			tip.setWrappingWidth(WIDTH - 236);
 			tip.setTextAlignment(TextAlignment.CENTER);
-			Text about = new Text(60, 200, "\tHello everyone!\n\n\tMy name is Stanislav Shergin (aka Claner). Thanks for playing this game!"
+			Text about = new Text(60, 200, "\tHello everyone!\n\n\tMy name is Stanislav Shergin (aka Claner/Cizerion). Thanks for playing this game!"
 					+ " This is my \"Java skill researching\" project named as \"SP/ACE\\TEROIDS\". Game was grown through "
 					+ "my Java learning interests and Java FX framework. For this projects i took free visual and sound game assets from different "
 					+ "authors on different sites. All authors with appropriate links were specified in CREDITS.TXT file in my GitHub repository https://github.com/Cizerion/Spaceteroids"
