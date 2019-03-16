@@ -74,7 +74,6 @@ public class ASBossClaw extends AnimatedSprite {
 				setVelocity(-90, Math.random() * 90);
 				enemies.add(new ASEnemySpaceship(50, getPositionX() + 50, getPositionY() + 70, 0, 0));
 				enemies.add(new ASEnemySpaceship(50, getPositionX() + 50, getPositionY() + 70, 0, 0));
-				enemies.add(new ASEnemySpaceship(50, getPositionX() + 50, getPositionY() + 70, 0, 0));
 		} else if(getPositionX() <= -10) setVelocity(90,  Math.random() * -90);
 		else if(getPositionY() <= 0) setVelocity(Math.random() * 90, 90);
 		else if(getPositionY() >= 425) setVelocity(Math.random() * -90, -90);

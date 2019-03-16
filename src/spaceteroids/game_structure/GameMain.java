@@ -56,6 +56,7 @@ public class GameMain extends Application {
     private static final double HEIGHT = 582;
     private static final String gameVersion = "v3.2 - 03.2019";
     private double enemyEntityCount = 5;
+    private double checkTimerCap = 217;
     private Stage gameStage;
     private SimpleTypeWrapper score;
     private SimpleTypeWrapper gameTime;
@@ -76,6 +77,8 @@ public class GameMain extends Application {
     private ArrayList<AnimatedSprite> hitList;
     private ArrayList<AnimatedSprite> hitTempList;
     private ASSpaceship ship;
+    private Sprite levelProgressBar;
+    private Sprite shipProgressBar;
 	private LoopableBackground space;
 	private LoopableBackground fastStars;
 	private LoopableBackground stars;
@@ -111,6 +114,14 @@ public class GameMain extends Application {
 	private MediaPlayer bossPlayer;
 	private MediaPlayer losePlayer;
 	private MediaPlayer winPlayer;
+	
+	public void drawLevelProgress(GraphicsContext gc, double checkTimer, double checkTimerCap) {
+		if(!(boss.isEmpty() || gameStatus.equals(GameStatus.AFTER_WIN))) {
+			shipProgressBar.setPosition(79 + (checkTimer * (360 / checkTimerCap)), 521);
+			levelProgressBar.render(gc);
+			shipProgressBar.render(gc);
+		}
+	}
 	
 	public void setLabelScorePosition(int posX, int posY) {
 		lbScore.setLayoutX(posX);
@@ -454,6 +465,8 @@ public class GameMain extends Application {
 		
         // create spaceship
 		ship = new ASSpaceship(100);
+		levelProgressBar = new Sprite("images/progressbar/pb2.png", 100, 527, 0, 0);
+	    shipProgressBar = new Sprite("images/ship/fff1-min.png", 42, 18, true, true, 79, 521, 0, 0);
         LauncherImpl.notifyPreloader(this, new Preloader.ProgressNotification((100 * ++count) / stages));
         
         score = new SimpleTypeWrapper(0);
@@ -979,10 +992,14 @@ public class GameMain extends Application {
 						}
 					}
 				}
+				
 				// timer for game events
-				checkTimer.setDoubleValue(checkTimer.getDoubleValue() + 0.02);
-				if(checkTimer.getDoubleValue() >= 217 && checkTimer.getDoubleValue() <= 217.02)
+				if(!(bossStage.getBooleanValue()) && !(gameStatus.equals(GameStatus.END_OF_GAME) || gameStatus.equals(GameStatus.AFTER_WIN)))
+					checkTimer.setDoubleValue(checkTimer.getDoubleValue() + 0.02);
+				if(checkTimer.getDoubleValue() >= checkTimerCap && checkTimer.getDoubleValue() <= (checkTimerCap + 0.02)) {
+					checkTimer.setDoubleValue(checkTimer.getDoubleValue() + 0.04);
 					bossStage.setBooleanValue(true);
+				}
 				
 		        // render and update sprites
 				space.update(0.06);
@@ -1039,6 +1056,8 @@ public class GameMain extends Application {
 				}
 				// for render animated sprites taking current sprite frame in animation			
 				ship.updateAndRender(time, gcGame, laserTempList);
+				
+				drawLevelProgress(gcGame, checkTimer.getDoubleValue(), checkTimerCap);
 				
 				// "end of game" reaction
 				if(boss.isEmpty() && !(gameStatus.equals(GameStatus.END_OF_GAME) || gameStatus.equals(GameStatus.AFTER_WIN))) { // show winner
