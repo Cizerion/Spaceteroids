@@ -378,7 +378,7 @@ public class CollisionDetection extends Thread {
 						Iterator<ASEnemySpaceship> enemyIter = enemies.iterator();
 				        while(enemyIter.hasNext()){
 				        	ASEnemySpaceship enemyTemp = enemyIter.next();
-				        	enemyTemp.laserFireLogic();
+				        	enemyTemp.laserFireLogic(WIDTH);
 				        	shipCollisionDetection(time, enemyTemp);
 				        	if(enemyTemp.getFrame(time).getPositionX() <= -150)
 				        		enemyIter.remove();

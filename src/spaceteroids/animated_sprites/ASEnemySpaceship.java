@@ -80,9 +80,9 @@ public class ASEnemySpaceship extends AnimatedSprite {
         	enemies.add(e.get(enemies.size()));
 	}
 	
-	public void laserFireLogic() {
+	public void laserFireLogic(double width) {
 		setTime(getTime() + 1);
-		if(laserList.size() < 5 && getTime() >= 100 && getPositionX() <= 560) {
+		if(laserList.size() < 5 && getTime() >= 100 && getPositionX() <= (width - 22)) {
 			laserList.add(new Sprite("images/laser/laser-inv.png", 22, 5, true, true, getPositionX() + 5, getPositionY() + 13, laserVelocityX, 0));
 			setTime(0);
 		}
@@ -116,7 +116,7 @@ public class ASEnemySpaceship extends AnimatedSprite {
 		getFrame(time).render(gc);
 	}
 	
-	public void updateAndRender(double time, GraphicsContext gc) {
+	public void updateAndRender(double time, GraphicsContext gc, double width) {
 		coef+=0.02;
 		for(Sprite tempLaser: laserList) {
 			tempLaser.update(0.06);
@@ -124,6 +124,6 @@ public class ASEnemySpaceship extends AnimatedSprite {
 		}
 		gc.fillRect(getPositionX(), getPositionY() - 6, (getWidth() - 26) * (getHealth() / (double) healthAtStart), 3);
 		update(0.06);
-		getFrame(time).render(gc);
+		if(getPositionX() < (width + 50)) getFrame(time).render(gc);
 	}
 }

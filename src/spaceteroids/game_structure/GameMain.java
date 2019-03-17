@@ -53,32 +53,32 @@ import spaceteroids.sprite_shapes.Sprite;
 public class GameMain extends Application {
 	
 	private static final double WIDTH = 582;
-    private static final double HEIGHT = 582;
-    private static final String gameVersion = "v3.2 - 03.2019";
-    private double enemyEntityCount = 5;
-    private double checkTimerCap = 217;
-    private Stage gameStage;
-    private SimpleTypeWrapper score;
-    private SimpleTypeWrapper gameTime;
-    private SimpleTypeWrapper checkTimer;
-    private SimpleTypeWrapper bossStage;
-    private ArrayList<AnimatedSprite> smallAsteroidList;
-    private ArrayList<AnimatedSprite> mediumAsteroidList;
-    private ArrayList<AnimatedSprite> largeAsteroidList;
-    private ArrayList<ASEnemySpaceship> enemies;
-    private ArrayList<ASBoss> boss;
-    private ArrayList<String> input;
-    private ArrayList<Sprite> laserTempList;
-    private ArrayList<Sprite> heartBoostList;
-    private ArrayList<AnimatedSprite> bangList;
-    private ArrayList<AnimatedSprite> bangTempList;
-    private ArrayList<AnimatedSprite> bigBangList;
-    private ArrayList<AnimatedSprite> bigBangTempList;
-    private ArrayList<AnimatedSprite> hitList;
-    private ArrayList<AnimatedSprite> hitTempList;
-    private ASSpaceship ship;
-    private Sprite levelProgressBar;
-    private Sprite shipProgressBar;
+	private static final double HEIGHT = 582;
+	private static final String gameVersion = "v3.2 - 03.2019";
+	private double enemyEntityCount = 5;
+	private double checkTimerCap = 217;
+	private Stage gameStage;
+	private SimpleTypeWrapper score;
+	private SimpleTypeWrapper gameTime;
+	private SimpleTypeWrapper checkTimer;
+	private SimpleTypeWrapper bossStage;
+	private ArrayList<AnimatedSprite> smallAsteroidList;
+	private ArrayList<AnimatedSprite> mediumAsteroidList;
+	private ArrayList<AnimatedSprite> largeAsteroidList;
+	private ArrayList<ASEnemySpaceship> enemies;
+	private ArrayList<ASBoss> boss;
+	private ArrayList<String> input;
+	private ArrayList<Sprite> laserTempList;
+	private ArrayList<Sprite> heartBoostList;
+	private ArrayList<AnimatedSprite> bangList;
+	private ArrayList<AnimatedSprite> bangTempList;
+	private ArrayList<AnimatedSprite> bigBangList;
+	private ArrayList<AnimatedSprite> bigBangTempList;
+	private ArrayList<AnimatedSprite> hitList;
+	private ArrayList<AnimatedSprite> hitTempList;
+	private ASSpaceship ship;
+	private Sprite levelProgressBar;
+	private Sprite shipProgressBar;
 	private LoopableBackground space;
 	private LoopableBackground fastStars;
 	private LoopableBackground stars;
@@ -88,26 +88,26 @@ public class GameMain extends Application {
 	private long wait;
 	private String command;
 	
-    private ScoreBoard[] sb;
-    private GameStatus gameStatus;
-    
+	private ScoreBoard[] sb;
+	private GameStatus gameStatus;
+	
 	private FlowPane labels;
-    private Label lbActivityTime;
-    private Label lbElapsedTime;
-    private Label lbFps;
-    private Label lbEEntities;
-    private Label lbTests2;
-    private Label lbScore;
-    private Text menuText;
-    private VBox menuButtons;
-    private Button newGameButton;
-    private Button optionsButton;
-    private Button scoreboardButton;
-    private Button controlsButton;
-    private Button aboutButton;
-    private Button exitButton;
-    private Button backButton;
-    private MediaPlayer menuPlayer;
+	private Label lbActivityTime;
+	private Label lbElapsedTime;
+	private Label lbFps;
+	private Label lbEEntities;
+	private Label lbTests2;
+	private Label lbScore;
+	private Text menuText;
+	private VBox menuButtons;
+	private Button newGameButton;
+	private Button optionsButton;
+	private Button scoreboardButton;
+	private Button controlsButton;
+	private Button aboutButton;
+	private Button exitButton;
+	private Button backButton;
+	private MediaPlayer menuPlayer;
 	private MediaView menuView;
 	private MediaPlayer gamePlayer;
 	private MediaView gameView;
@@ -1011,22 +1011,22 @@ public class GameMain extends Application {
 												
 				for(AnimatedSprite tempAsteroid: smallAsteroidList) {
 					tempAsteroid.update(0.06);
-					tempAsteroid.render(time, gcGame);
+					if(tempAsteroid.getPositionX() < (WIDTH + 50)) tempAsteroid.render(time, gcGame);
 				}
 								
 				for(AnimatedSprite tempAsteroid: mediumAsteroidList) {
 					tempAsteroid.update(0.06);
-					tempAsteroid.render(time, gcGame);
+					if(tempAsteroid.getPositionX() < (WIDTH + 75)) tempAsteroid.render(time, gcGame);
 				}
 				
 				for(AnimatedSprite tempAsteroid: largeAsteroidList) {
 					tempAsteroid.update(0.06);
-					tempAsteroid.render(time, gcGame);
+					if(tempAsteroid.getPositionX() < (WIDTH + 150)) tempAsteroid.render(time, gcGame);
 				}
 				
 				for(Sprite tempBoost: heartBoostList) {
 					tempBoost.update(0.06);
-					tempBoost.render(gcGame);
+					if(tempBoost.getPositionX() < (WIDTH + 50)) tempBoost.render(gcGame);
 				}
 				
 				if(bossStage.getBooleanValue()) {
@@ -1048,7 +1048,7 @@ public class GameMain extends Application {
 				}
 				
 				for(ASEnemySpaceship tempEnemy: enemies)
-					tempEnemy.updateAndRender(time, gcGame);
+					tempEnemy.updateAndRender(time, gcGame, WIDTH);
 				
 				for(AnimatedSprite tempHit: hitList) {
 					tempHit.update(0.06);
