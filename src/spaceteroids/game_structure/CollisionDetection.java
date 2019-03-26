@@ -1,7 +1,7 @@
 package spaceteroids.game_structure;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import javafx.animation.AnimationTimer;
 import javafx.scene.media.Media;
@@ -23,18 +23,19 @@ public class CollisionDetection extends Thread {
 	private double HEIGHT;
 	private double enemyEntityCount;
     private SimpleTypeWrapper score;
+    private SimpleTypeWrapper bossStage;
     private SimpleTypeWrapper checkTimer;
-    private ArrayList<AnimatedSprite> smallAsteroidList;
-    private ArrayList<AnimatedSprite> mediumAsteroidList;
-    private ArrayList<AnimatedSprite> largeAsteroidList;
-    private ArrayList<Sprite> heartBoostList;
-    private ArrayList<Sprite> laserList;
-    private ArrayList<AnimatedSprite> bangList;
-    private ArrayList<AnimatedSprite> bangTempList;
-    private ArrayList<AnimatedSprite> bigBangList;
-    private ArrayList<AnimatedSprite> bigBangTempList;
-    private ArrayList<AnimatedSprite> hitList; 
-    private ArrayList<AnimatedSprite> hitTempList;
+    private List<AnimatedSprite> smallAsteroidList;
+    private List<AnimatedSprite> mediumAsteroidList;
+    private List<AnimatedSprite> largeAsteroidList;
+    private List<Sprite> heartBoostList;
+    private List<Sprite> laserList;
+    private List<AnimatedSprite> bangList;
+    private List<AnimatedSprite> bangTempList;
+    private List<AnimatedSprite> bigBangList;
+    private List<AnimatedSprite> bigBangTempList;
+    private List<AnimatedSprite> hitList; 
+    private List<AnimatedSprite> hitTempList;
     private MediaPlayer bangPlayer;
     private MediaPlayer bigBangPlayer;
     private MediaPlayer hitPlayer;
@@ -42,9 +43,8 @@ public class CollisionDetection extends Thread {
     private MediaPlayer boostPlayer;
     double timeParam;
     private ASSpaceship ship;
-    private ArrayList<ASBoss> boss;
-    private ArrayList<ASEnemySpaceship> enemies;
-    
+    private List<ASBoss> boss;
+    private List<ASEnemySpaceship> enemies;
     private AnimationTimer collision;
 		
     public CollisionDetection() {
@@ -65,21 +65,22 @@ public class CollisionDetection extends Thread {
     public CollisionDetection(double WIDTH, double HEIGHT, double enemyEntityCount,
     SimpleTypeWrapper score,
     SimpleTypeWrapper checkTimer,
-    ArrayList<AnimatedSprite> smallAsteroidList,
-    ArrayList<AnimatedSprite> mediumAsteroidList,
-    ArrayList<AnimatedSprite> largeAsteroidList,
-    ArrayList<Sprite> heartBoostList,
-    ArrayList<Sprite> laserList,
-    ArrayList<AnimatedSprite> bangList,
-    ArrayList<AnimatedSprite> bangTempList,
-    ArrayList<AnimatedSprite> bigBangList,
-    ArrayList<AnimatedSprite> bigBangTempList,
-    ArrayList<AnimatedSprite> hitList,
-    ArrayList<AnimatedSprite> hitTempList,
+    SimpleTypeWrapper bossStage,
+    List<AnimatedSprite> smallAsteroidList,
+    List<AnimatedSprite> mediumAsteroidList,
+    List<AnimatedSprite> largeAsteroidList,
+    List<Sprite> heartBoostList,
+    List<Sprite> laserList,
+    List<AnimatedSprite> bangList,
+    List<AnimatedSprite> bangTempList,
+    List<AnimatedSprite> bigBangList,
+    List<AnimatedSprite> bigBangTempList,
+    List<AnimatedSprite> hitList,
+    List<AnimatedSprite> hitTempList,
     double timeParam,
     ASSpaceship ship,
-    ArrayList<ASBoss> boss,
-    ArrayList<ASEnemySpaceship> enemies) {
+    List<ASBoss> boss,
+    List<ASEnemySpaceship> enemies) {
     	setName("Collision detection");
     	URL sound = getClass().getResource("/sounds/explosion/explodemini.wav");
     	bangPlayer = new MediaPlayer(new Media(sound.toString()));
@@ -97,6 +98,7 @@ public class CollisionDetection extends Thread {
 		this.enemyEntityCount = enemyEntityCount;
 		this.score = score;
 		this.checkTimer = checkTimer;
+		this.bossStage = bossStage;
 		this.smallAsteroidList = smallAsteroidList;
 		this.mediumAsteroidList = mediumAsteroidList;
 		this.largeAsteroidList = largeAsteroidList;
@@ -118,42 +120,44 @@ public class CollisionDetection extends Thread {
     public void setParams(double WIDTH, double HEIGHT, double enemyEntityCount,
     	    SimpleTypeWrapper score,
     	    SimpleTypeWrapper checkTimer,
-    	    ArrayList<AnimatedSprite> smallAsteroidList,
-    	    ArrayList<AnimatedSprite> mediumAsteroidList,
-    	    ArrayList<AnimatedSprite> largeAsteroidList,
-    	    ArrayList<Sprite> heartBoostList,
-    	    ArrayList<Sprite> laserList,
-    	    ArrayList<AnimatedSprite> bangList,
-    	    ArrayList<AnimatedSprite> bangTempList,
-    	    ArrayList<AnimatedSprite> bigBangList,
-    	    ArrayList<AnimatedSprite> bigBangTempList,
-    	    ArrayList<AnimatedSprite> hitList,
-    	    ArrayList<AnimatedSprite> hitTempList,
+    	    SimpleTypeWrapper bossStage,
+    	    List<AnimatedSprite> smallAsteroidList2,
+    	    List<AnimatedSprite> mediumAsteroidList2,
+    	    List<AnimatedSprite> largeAsteroidList2,
+    	    List<Sprite> heartBoostList2,
+    	    List<Sprite> list,
+    	    List<AnimatedSprite> bangList2,
+    	    List<AnimatedSprite> bangTempList2,
+    	    List<AnimatedSprite> bigBangList2,
+    	    List<AnimatedSprite> bigBangTempList2,
+    	    List<AnimatedSprite> hitList2,
+    	    List<AnimatedSprite> hitTempList2,
     	    double timeParam,
     	    ASSpaceship ship,
-    	    ArrayList<ASBoss> boss,
-    	    ArrayList<ASEnemySpaceship> enemies) {
-		this.bangTempList = bangTempList;
+    	    List<ASBoss> boss2,
+    	    List<ASEnemySpaceship> enemies2) {
+		this.bangTempList = bangTempList2;
 		this.WIDTH = WIDTH;
 		this.HEIGHT = HEIGHT;
 		this.enemyEntityCount = enemyEntityCount;
 		this.score = score;
 		this.checkTimer = checkTimer;
-		this.smallAsteroidList = smallAsteroidList;
-		this.mediumAsteroidList = mediumAsteroidList;
-		this.largeAsteroidList = largeAsteroidList;
-		this.heartBoostList = heartBoostList;
-		this.laserList = laserList;
-		this.bangList = bangList;
-		this.bangTempList = bangTempList;
-		this.bigBangList = bigBangList;
-		this.bigBangTempList = bigBangTempList;
-		this.hitList = hitList;
-		this.hitTempList = hitTempList;
+		this.bossStage = bossStage;
+		this.smallAsteroidList = smallAsteroidList2;
+		this.mediumAsteroidList = mediumAsteroidList2;
+		this.largeAsteroidList = largeAsteroidList2;
+		this.heartBoostList = heartBoostList2;
+		this.laserList = list;
+		this.bangList = bangList2;
+		this.bangTempList = bangTempList2;
+		this.bigBangList = bigBangList2;
+		this.bigBangTempList = bigBangTempList2;
+		this.hitList = hitList2;
+		this.hitTempList = hitTempList2;
 		this.timeParam = timeParam;
 		this.ship = ship;
-		this.boss = boss;
-		this.enemies = enemies;
+		this.boss = boss2;
+		this.enemies = enemies2;
     }
     
     public void shipBoostCollisionDetection(double time, Sprite entityTemp, Iterator<Sprite> tempIter) {
@@ -201,13 +205,13 @@ public class CollisionDetection extends Thread {
 		}
 	}
 	
-	public void addEffect(ArrayList<AnimatedSprite> mainList, ArrayList<AnimatedSprite> buffList, double time, Sprite temp, double deltaX, double deltaY) {
+	public void addEffect(List<AnimatedSprite> mainList, List<AnimatedSprite> buffList, double time, Sprite temp, double deltaX, double deltaY) {
 		mainList.add(buffList.get(mainList.size()));
 		mainList.get(mainList.size() - 1).setPosition(temp.getPositionX() + deltaX, temp.getPositionY() + deltaY);
 		mainList.get(mainList.size() - 1).setTime(time);
 	}
 	
-	public void addEffect(ArrayList<AnimatedSprite> mainList, ArrayList<AnimatedSprite> buffList, double time, Sprite temp, double deltaX, double deltaY, double velX, double velY) {
+	public void addEffect(List<AnimatedSprite> mainList, List<AnimatedSprite> buffList, double time, Sprite temp, double deltaX, double deltaY, double velX, double velY) {
 		mainList.add(buffList.get(mainList.size()));
 		mainList.get(mainList.size() - 1).setPosition(temp.getPositionX() + deltaX, temp.getPositionY() + deltaY);
 		mainList.get(mainList.size() - 1).setVelocity(velX, velY);
@@ -250,7 +254,9 @@ public class CollisionDetection extends Thread {
 				
 				public void handle(long currentNanoTime) {
 					double time = (currentNanoTime - timeParam)/1000000000d;
-					if(ship.isImmunity()) ship.setTime(ship.getTime() + 1);
+					if(ship.isImmunity()) {
+						ship.setTime(ship.getTime() + 1);
+					}
 					try {
 						Iterator<Sprite> laserIter = laserList.iterator();
 						while(laserIter.hasNext()){
@@ -269,7 +275,12 @@ public class CollisionDetection extends Thread {
 				        				addEffect(bangList, bangTempList, time, tempLaser, -80d, -128d);
 				        				bangSoundPlay();
 				        				enemyIter.remove();
-				        				score.setIntValue(score.getIntValue() + (int)(200 + 10 * (enemies.size() + 1)));
+				        				if(!bossStage.getBooleanValue()) {
+				        					score.setIntValue(score.getIntValue() + (int)(200 + 10 * (enemies.size() + 1)));
+				        				} else {
+				        					score.setIntValue(score.getIntValue() + 4);
+				        				}
+				        				
 				        			} else {
 				        				addEffect(hitList, hitTempList, time, tempLaser, -20d, -50d);
 					        			hitSoundPlay();
@@ -337,7 +348,11 @@ public class CollisionDetection extends Thread {
 				        				addEffect(bangList, bangTempList, time, tempLaser, -100d, -128d);
 					        			bangSoundPlay();
 				        				asteroidIter.remove();
-				        				score.setIntValue(score.getIntValue() + (int)(100 + 9 * (smallAsteroidList.size() + 1)));
+				        				if(!bossStage.getBooleanValue()) {
+				        					score.setIntValue(score.getIntValue() + (int)(100 + 9 * (smallAsteroidList.size() + 1)));
+				        				} else {
+				        					score.setIntValue(score.getIntValue() + 2);
+				        				}
 				        			} else {
 				        				addEffect(hitList, hitTempList, time, tempLaser, 0d, -50d);
 					        			hitSoundPlay();
@@ -380,8 +395,9 @@ public class CollisionDetection extends Thread {
 				        	ASEnemySpaceship enemyTemp = enemyIter.next();
 				        	enemyTemp.laserFireLogic(WIDTH);
 				        	shipCollisionDetection(time, enemyTemp);
-				        	if(enemyTemp.getFrame(time).getPositionX() <= -150)
-				        		enemyIter.remove();
+				        	if(enemyTemp.getFrame(time).getPositionX() <= -150) {
+								enemyIter.remove();
+							}
 				        	Iterator<Sprite> laserEnemyIter = enemyTemp.getLaserList().iterator();
 				        	while(laserEnemyIter.hasNext()) { //enemy laser intersection with ship
 				        		Sprite tempEnemyLaser = laserEnemyIter.next();
@@ -417,32 +433,36 @@ public class CollisionDetection extends Thread {
 				        Iterator<AnimatedSprite> asteroidIter = smallAsteroidList.iterator();
 				        while(asteroidIter.hasNext()){
 				        	AnimatedSprite asteroidTemp = asteroidIter.next();
-				        	if(asteroidTemp.getFrame(time).getPositionX() <= -100)
-				        		asteroidIter.remove();
+				        	if(asteroidTemp.getFrame(time).getPositionX() <= -100) {
+								asteroidIter.remove();
+							}
 				        	shipCollisionDetection(time, asteroidTemp);
 					    }
 				        //medium asteroid intersection with ship
 				        asteroidIter = mediumAsteroidList.iterator();
 				        while(asteroidIter.hasNext()){
 				        	AnimatedSprite asteroidTemp = asteroidIter.next();
-				        	if(asteroidTemp.getFrame(time).getPositionX() <= -150)
-				        		asteroidIter.remove();
+				        	if(asteroidTemp.getFrame(time).getPositionX() <= -150) {
+								asteroidIter.remove();
+							}
 				        	shipCollisionDetection(time, asteroidTemp);
 				        }
 				        //large asteroid intersection with ship
 				        asteroidIter = largeAsteroidList.iterator();
 				        while(asteroidIter.hasNext()){
 				        	AnimatedSprite asteroidTemp = asteroidIter.next();
-				        	if(asteroidTemp.getFrame(time).getPositionX() <= -200)
-				        		asteroidIter.remove();
+				        	if(asteroidTemp.getFrame(time).getPositionX() <= -200) {
+								asteroidIter.remove();
+							}
 				        	shipCollisionDetection(time, asteroidTemp);
 				        }
 				        // heart boost intersection with ship
 				        Iterator<Sprite> boostIter = heartBoostList.iterator();
 				        while(boostIter.hasNext()) {
 				        	Sprite boostTemp = boostIter.next();
-				        	if(boostTemp.getPositionX() <= -50)
-				        		boostIter.remove();
+				        	if(boostTemp.getPositionX() <= -50) {
+								boostIter.remove();
+							}
 				        	shipBoostCollisionDetection(time, boostTemp, boostIter);
 				        }
 				        // check bang position
@@ -492,24 +512,31 @@ public class CollisionDetection extends Thread {
 						}
 						// generation new enemies and asteroids
 						if(checkTimer.getDoubleValue() <= 200) {
-							if((int)(checkTimer.getDoubleValue()) >= 1 && (int)(checkTimer.getDoubleValue()) % 25 == 0)
+							if((int)(checkTimer.getDoubleValue()) >= 1 && (int)(checkTimer.getDoubleValue()) % 25 == 0) {
 								enemyEntityCount += 0.0201;
-							if(checkTimer.getDoubleValue() >= 60.5 && checkTimer.getDoubleValue() < 60.57)
+							}
+							if(checkTimer.getDoubleValue() >= 60.5 && checkTimer.getDoubleValue() < 60.57) {
 								largeAsteroidList.add(Asteroids.randomAsteroid("large" , WIDTH, 100, WIDTH, 400));
-							if(smallAsteroidList.size() < (int)(enemyEntityCount))
+							}
+							if(smallAsteroidList.size() < (int)(enemyEntityCount)) {
 								smallAsteroidList.add(Asteroids.randomAsteroid("small" , WIDTH, 0, (2 * WIDTH), HEIGHT));
-							if(mediumAsteroidList.size() < (int)(enemyEntityCount / 3))
+							}
+							if(mediumAsteroidList.size() < (int)(enemyEntityCount / 3)) {
 								mediumAsteroidList.add(Asteroids.randomAsteroid("medium" , (2 * WIDTH), 0, (2 * WIDTH), HEIGHT));
-							if(largeAsteroidList.size() < (int)(enemyEntityCount / 5))
+							}
+							if(largeAsteroidList.size() < (int)(enemyEntityCount / 5)) {
 								largeAsteroidList.add(Asteroids.randomAsteroid("large" , (4 * WIDTH), 0, (2 * WIDTH), HEIGHT));
-							if(heartBoostList.size() < 2)
+							}
+							if(heartBoostList.size() < 2) {
 								heartBoostList.add(Boosts.boost("heart", (4 * WIDTH), 0, (2 * WIDTH), HEIGHT));
-							if(enemies.size() < (int)(enemyEntityCount / 1.5))
+							}
+							if(enemies.size() < (int)(enemyEntityCount / 1.5)) {
 								enemies.add(new ASEnemySpaceship(50, WIDTH, 0, (2 * WIDTH), HEIGHT));
+							}
 						}
 					}
 					catch (IllegalStateException ile) {
-						System.out.println("2 asteroids were shoted by 1 laser");
+						System.out.println("2 entities were shoted by 1 laser");
 					}
 					catch (Exception e) {
 						e.printStackTrace();

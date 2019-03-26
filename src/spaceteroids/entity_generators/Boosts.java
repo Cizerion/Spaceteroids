@@ -2,6 +2,7 @@ package spaceteroids.entity_generators;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import spaceteroids.sprite_shapes.Sprite;
 
@@ -23,25 +24,28 @@ final public class Boosts {
 		}
 	}
 	
-	public static ArrayList<Sprite> generateBoosts(int amount, String type, double minX, double minY, double maxX, double maxY) {
-		ArrayList<Sprite> boostList = new ArrayList<Sprite>();
-		for (int i = 0; i < amount; i++) 
+	public static List<Sprite> generateBoosts(int amount, String type, double minX, double minY, double maxX, double maxY) {
+		List<Sprite> boostList = new ArrayList<Sprite>();
+		for (int i = 0; i < amount; i++) {
 			boostList.add(boost(type, minX, minY, maxX, maxY));
+		}
     	return boostList;
 	}
 	
-	public static void setBoostsVelocity(ArrayList<Sprite> boostList, double velocityX, double velocityY) {
-		for(Sprite boostTemp: boostList)
+	public static void setBoostsVelocity(List<Sprite> boostList, double velocityX, double velocityY) {
+		for(Sprite boostTemp: boostList) {
 			boostTemp.setVelocity(velocityX, velocityY);
+		}
 	}
 	
-	public static void regenerateBoosts(ArrayList<Sprite> boostList, int amount, String type, double minX, double minY, double maxX, double maxY) {
+	public static void regenerateBoosts(List<Sprite> boostList, int amount, String type, double minX, double minY, double maxX, double maxY) {
 		Iterator<Sprite> boostIter = boostList.iterator();
 		while(boostIter.hasNext()) {
 			boostIter.next();
 			boostIter.remove();
 		}
-		for(int i = 0; i < amount; i++) 
+		for(int i = 0; i < amount; i++) {
 			boostList.add(boost(type, minX, minY, maxX, maxY));
+		}
 	}
 }

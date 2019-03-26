@@ -1,5 +1,5 @@
 package spaceteroids.entity_generators;
-import java.util.ArrayList;
+import java.util.List;
 
 import spaceteroids.animated_sprites.AnimatedSprite;
 import spaceteroids.sprite_shapes.Sprite;
@@ -7,12 +7,12 @@ import spaceteroids.sprite_shapes.Sprite;
 public class BangBuffer extends Thread {
 	
 	private volatile boolean isAlive;
-	private ArrayList<AnimatedSprite> bangTempList;
-	private ArrayList<AnimatedSprite> bigBangTempList;
-	private ArrayList<AnimatedSprite> hitTempList;
-	private ArrayList<Sprite> laserTempList;
+	private List<AnimatedSprite> bangTempList;
+	private List<AnimatedSprite> bigBangTempList;
+	private List<AnimatedSprite> hitTempList;
+	private List<Sprite> laserTempList;
 		
-	public BangBuffer(ArrayList<AnimatedSprite> bangList, ArrayList<AnimatedSprite> bigBangList ,ArrayList<Sprite> laserList, ArrayList<AnimatedSprite> hitList) {
+	public BangBuffer(List<AnimatedSprite> bangList, List<AnimatedSprite> bigBangList, List<Sprite> laserList, List<AnimatedSprite> hitList) {
 		setName("Bang buffer");
 		isAlive = true;
 		laserTempList = laserList;
@@ -39,10 +39,12 @@ public class BangBuffer extends Thread {
 			}
 			if(bangTempList.size() < 10) {
     			Sprite[] temp = new Sprite[44];
-    	        for(int i = 0; i < temp.length - 2; i++)
-    	        	temp[i] = new Sprite("images/explosion/exp (" + (i+1) + ")-min.png");
-    	        for(int i = 42; i < temp.length; i++)
-    	        	temp[i] = new Sprite("images/explosion/exp (42)-min.png");
+    	        for(int i = 0; i < temp.length - 2; i++) {
+					temp[i] = new Sprite("images/explosion/exp (" + (i+1) + ")-min.png");
+				}
+    	        for(int i = 42; i < temp.length; i++) {
+					temp[i] = new Sprite("images/explosion/exp (42)-min.png");
+				}
     	        AnimatedSprite bang = new AnimatedSprite(temp);
     			bang.setVelocity(-66, 0);
     			bang.setDuration(0.05);
@@ -50,10 +52,12 @@ public class BangBuffer extends Thread {
 			}
 			if(hitTempList.size() < 8) {
     			Sprite[] temp = new Sprite[16];
-    	        for(int i = 0; i < temp.length - 2; i++)
-    	        	temp[i] = new Sprite("images/hit/hit (" + (i+1) + ")-min.png");
-    	        for(int i = 14; i < temp.length; i++)
-    	        	temp[i] = new Sprite("images/hit/hit (14)-min.png");
+    	        for(int i = 0; i < temp.length - 2; i++) {
+					temp[i] = new Sprite("images/hit/hit (" + (i+1) + ")-min.png");
+				}
+    	        for(int i = 14; i < temp.length; i++) {
+					temp[i] = new Sprite("images/hit/hit (14)-min.png");
+				}
     	        AnimatedSprite hit = new AnimatedSprite(temp);
     	        hit.setVelocity(20, 0);
     	        hit.setDuration(0.06);
@@ -61,8 +65,9 @@ public class BangBuffer extends Thread {
 			}
 			if(bigBangTempList.size() < 2) {
     			Sprite[] temp = new Sprite[63];
-    	        for(int i = 0; i < temp.length; i++)
-    	        	temp[i] = new Sprite("images/explosion/boss/bexp (" + (i+1) + ")-min.png");
+    	        for(int i = 0; i < temp.length; i++) {
+					temp[i] = new Sprite("images/explosion/boss/bexp (" + (i+1) + ")-min.png");
+				}
     	        AnimatedSprite bang = new AnimatedSprite(temp);
     			bang.setVelocity(-66, 0);
     			bang.setDuration(0.02);

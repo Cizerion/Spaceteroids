@@ -2,6 +2,7 @@ package spaceteroids.animated_sprites;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import javafx.scene.canvas.GraphicsContext;
 import spaceteroids.sprite_shapes.BossClaw;
@@ -16,8 +17,11 @@ public class ASBossClaw extends AnimatedSprite {
 		
 	public ASBossClaw(int hlth, double posX, double posY) {
 		super();
-		if((counter % 2) == 0) trajectory = 0;
-		else trajectory = 1;
+		if((counter % 2) == 0) {
+			trajectory = 0;
+		} else {
+			trajectory = 1;
+		}
 		setHealth(hlth);
 		healthAtStart = hlth;
 		setDuration(0.075);
@@ -29,8 +33,11 @@ public class ASBossClaw extends AnimatedSprite {
 	
 	public ASBossClaw(Sprite[] collection, int hlth, double posX, double posY) {
 		super(collection);
-		if((counter % 2) == 0) trajectory = 0;
-		else trajectory = 1;
+		if((counter % 2) == 0) {
+			trajectory = 0;
+		} else {
+			trajectory = 1;
+		}
 		setHealth(hlth);
 		healthAtStart = hlth;
 		setDuration(0.075);
@@ -40,14 +47,15 @@ public class ASBossClaw extends AnimatedSprite {
 	}
 	
 	//Behavior
-	public void setClawBehavior(ArrayList<ASEnemySpaceship> enemies) {
+	public void setClawBehavior(List<ASEnemySpaceship> enemies) {
 		if(getPositionX() <= 360 && counter == 3) {
 			setTime(getTime() + 1);
 			setImmunity(false);
 			if(trajectory == 0) {
 				setVelocity(0, -(Math.sin(coef) + Math.cos(coef)) * 35);
-				if(getTime() >= 100 && getTime() < 225)
+				if(getTime() >= 100 && getTime() < 225) {
 					addVelocity(-70, 0);
+				}
 				if(getTime() >= 225 && getPositionX() <= 352) {
 					addVelocity(70, 0);
 					if(getPositionX() >= 350) {
@@ -58,8 +66,9 @@ public class ASBossClaw extends AnimatedSprite {
 				}
 			} else {
 				setVelocity(0, (Math.sin(coef) + Math.cos(coef)) * 35);
-				if(getTime() >= 175 && getTime() < 300)
+				if(getTime() >= 175 && getTime() < 300) {
 					addVelocity(-70, 0);
+				}
 				if(getTime() >= 300 && getPositionX() <= 352) {
 					addVelocity(70, 0);
 					if(getPositionX() >= 350) {
@@ -69,14 +78,19 @@ public class ASBossClaw extends AnimatedSprite {
 					}
 				}
 			}
-		} else if(counter == 3)	setVelocity(-20, 0);
-		else if(getPositionX() >= 375) {
-				setVelocity(-90, Math.random() * 90);
-				enemies.add(new ASEnemySpaceship(50, getPositionX() + 50, getPositionY() + 70, 0, 0));
-				enemies.add(new ASEnemySpaceship(50, getPositionX() + 50, getPositionY() + 70, 0, 0));
-		} else if(getPositionX() <= -10) setVelocity(90,  Math.random() * -90);
-		else if(getPositionY() <= 0) setVelocity(Math.random() * 90, 90);
-		else if(getPositionY() >= 425) setVelocity(Math.random() * -90, -90);
+		} else if(counter == 3) {
+			setVelocity(-20, 0);
+		} else if(getPositionX() >= 375) {
+			setVelocity(-90, Math.random() * 90);
+			enemies.add(new ASEnemySpaceship(50, getPositionX() + 50, getPositionY() + 70, 0, 0));
+			enemies.add(new ASEnemySpaceship(50, getPositionX() + 50, getPositionY() + 70, 0, 0));
+		} else if(getPositionX() <= -10) {
+			setVelocity(90,  Math.random() * -90);
+		} else if(getPositionY() <= 0) {
+			setVelocity(Math.random() * 90, 90);
+		} else if(getPositionY() >= 425) {
+			setVelocity(Math.random() * -90, -90);
+		}
 	}
 	
 	public void setImmunity(boolean imnty) {
@@ -95,10 +109,11 @@ public class ASBossClaw extends AnimatedSprite {
 		counter -= 1;
 	}
 	
-	public static ArrayList<ASBossClaw> generateBossClaws(int amount, int health, double posX, double posY){
-		ArrayList<ASBossClaw> claws = new ArrayList<ASBossClaw>();
-		for(int i = 0; i < amount; i++)
+	public static List<ASBossClaw> generateBossClaws(int amount, int health, double posX, double posY){
+		List<ASBossClaw> claws = new ArrayList<ASBossClaw>();
+		for(int i = 0; i < amount; i++) {
 			claws.add(new ASBossClaw(health, posX, posY + (i * 1)));
+		}
 		return claws;
 	}
 	
@@ -108,9 +123,9 @@ public class ASBossClaw extends AnimatedSprite {
         	clawIter.next();
         	clawIter.remove();
         }
-        ArrayList<ASBossClaw> bc = generateBossClaws(amount, health, posX, posY);
-		while(claws.size() != amount)
-        	claws.add(bc.get(claws.size()));
+        for(int i = 0; i < amount; i++) {
+			claws.add(new ASBossClaw(health, posX, posY + (i * 1)));
+		}
 	}
 	
 	public BossClaw getFrame(double time) {
@@ -119,8 +134,9 @@ public class ASBossClaw extends AnimatedSprite {
 			
 	public void setDefaultClawFrames() {
 		BossClaw[] imageArray = new BossClaw[6];
-		for(int i = 0; i < imageArray.length; i++)
+		for(int i = 0; i < imageArray.length; i++) {
 			imageArray[i] = new BossClaw("images/boss/claw/" + (i+1) + "-min.png");
+		}
 		setFrameSequence(imageArray);
 	}
 	
@@ -130,7 +146,7 @@ public class ASBossClaw extends AnimatedSprite {
 		getFrame(time).render(gc);
 	}
 	
-	public void updateAndRender(double time, GraphicsContext gc, ArrayList<ASEnemySpaceship> enemies) {
+	public void updateAndRender(double time, GraphicsContext gc, List<ASEnemySpaceship> enemies) {
 		setClawBehavior(enemies);
 		coef+=0.02;
 		gc.fillRect(getPositionX() + 10, getPositionY() - 6, (getWidth() - 70) * (getHealth() / (double) healthAtStart), 8);

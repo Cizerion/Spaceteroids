@@ -2,13 +2,14 @@ package spaceteroids.animated_sprites;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import javafx.scene.canvas.GraphicsContext;
 import spaceteroids.sprite_shapes.EnemySpaceship;
 import spaceteroids.sprite_shapes.Sprite;
 
 public class ASEnemySpaceship extends AnimatedSprite {
-	private ArrayList<Sprite> laserList;
+	private List<Sprite> laserList;
 	private int trajectory;
 	private int healthAtStart;
 	private double coef;
@@ -41,8 +42,11 @@ public class ASEnemySpaceship extends AnimatedSprite {
 	}
 	
 	public void setTrajectory() {
-		if(trajectory == 0) setVelocity(enemyVelocityX, Math.sin(coef) * 20);
-		else setVelocity(enemyVelocityX, Math.cos(coef) * 20);
+		if(trajectory == 0) {
+			setVelocity(enemyVelocityX, Math.sin(coef) * 20);
+		} else {
+			setVelocity(enemyVelocityX, Math.cos(coef) * 20);
+		}
 	}
 	
 	public int getTrajectory() {
@@ -53,31 +57,36 @@ public class ASEnemySpaceship extends AnimatedSprite {
 		return coef;
 	}
 	
-	public static void setDefaultEnemyVelocity(ArrayList<ASEnemySpaceship> enemyList) {
+	public static void setDefaultEnemyVelocity(List<ASEnemySpaceship> enemyList) {
 		for(ASEnemySpaceship enemyTemp: enemyList) {
-			if(enemyTemp.getTrajectory() == 0) enemyTemp.setVelocity(enemyVelocityX, Math.sin(enemyTemp.getCoef()) * 20);
-			else enemyTemp.setVelocity(enemyVelocityX, Math.cos(enemyTemp.getCoef()) * 20);
-			for(Sprite tempLaser: enemyTemp.getLaserList())
+			if(enemyTemp.getTrajectory() == 0) {
+				enemyTemp.setVelocity(enemyVelocityX, Math.sin(enemyTemp.getCoef()) * 20);
+			} else {
+				enemyTemp.setVelocity(enemyVelocityX, Math.cos(enemyTemp.getCoef()) * 20);
+			}
+			for(Sprite tempLaser: enemyTemp.getLaserList()) {
 				tempLaser.setVelocity(laserVelocityX, 0);
+			}
 		}
 	}
 
-	public static ArrayList<ASEnemySpaceship> generateEnemySpaceships(int amount, int health, double minX, double minY, double maxX, double maxY){
-		ArrayList<ASEnemySpaceship> enemies = new ArrayList<ASEnemySpaceship>();
-		for(int i = 0; i < amount; i++)
+	public static List<ASEnemySpaceship> generateEnemySpaceships(int amount, int health, double minX, double minY, double maxX, double maxY){
+		List<ASEnemySpaceship> enemies = new ArrayList<ASEnemySpaceship>(30);
+		for(int i = 0; i < amount; i++) {
 			enemies.add(new ASEnemySpaceship(health, minX, minY, maxX, maxY));
+		}
 		return enemies;
 	}
 	
-	public static void regenerateEnemySpaceships(ArrayList<ASEnemySpaceship> enemies, int amount, int health, double minX, double minY, double maxX, double maxY){
+	public static void regenerateEnemySpaceships(List<ASEnemySpaceship> enemies, int amount, int health, double minX, double minY, double maxX, double maxY){
 		Iterator<ASEnemySpaceship> enemyIter = enemies.iterator();
         while(enemyIter.hasNext()){
         	enemyIter.next();
         	enemyIter.remove();
         }
-        ArrayList<ASEnemySpaceship> e = generateEnemySpaceships(amount, health, minX, minY, maxX, maxY);
-		while(enemies.size() != amount)
-        	enemies.add(e.get(enemies.size()));
+        for(int i = 0; i < amount; i++) {
+			enemies.add(new ASEnemySpaceship(health, minX, minY, maxX, maxY));
+		}
 	}
 	
 	public void laserFireLogic(double width) {
@@ -89,8 +98,9 @@ public class ASEnemySpaceship extends AnimatedSprite {
 		Iterator<Sprite> laserIter = laserList.iterator();
 		while(laserIter.hasNext()){
         	Sprite tempLaser = laserIter.next();
-        	if(tempLaser.getPositionX() <= -30)
-        		laserIter.remove();
+        	if(tempLaser.getPositionX() <= -30) {
+				laserIter.remove();
+			}
 		}
 	}
 	
@@ -100,18 +110,20 @@ public class ASEnemySpaceship extends AnimatedSprite {
 			
 	public void setDefaultShipFrames() {
 		EnemySpaceship[] imageArray = new EnemySpaceship[4];
-		for(int i = 0; i < imageArray.length; i++)
+		for(int i = 0; i < imageArray.length; i++) {
 			imageArray[i] = new EnemySpaceship("images/enemies/ff" + (i+1) + "-min.png");
+		}
 		setFrameSequence(imageArray);
 	}
 		
-	public ArrayList<Sprite> getLaserList() {
+	public List<Sprite> getLaserList() {
 		return laserList;
 	}
 	
 	public void render(double time, GraphicsContext gc) {
-		for(Sprite tempLaser: laserList)
+		for(Sprite tempLaser: laserList) {
 			tempLaser.render(gc);
+		}
 		gc.fillRect(getPositionX(), getPositionY() - 6, (getWidth() - 26) * (getHealth() / (double) healthAtStart), 3);
 		getFrame(time).render(gc);
 	}
@@ -124,6 +136,8 @@ public class ASEnemySpaceship extends AnimatedSprite {
 		}
 		gc.fillRect(getPositionX(), getPositionY() - 6, (getWidth() - 26) * (getHealth() / (double) healthAtStart), 3);
 		update(0.06);
-		if(getPositionX() < (width + 50)) getFrame(time).render(gc);
+		if(getPositionX() < (width + 50)) {
+			getFrame(time).render(gc);
+		}
 	}
 }

@@ -26,7 +26,6 @@ public class GamePreloader extends Preloader {
 	
 	private static final double WIDTH = 582;
     private static final double HEIGHT = 582;
-
     private Stage preloaderStage;
     private Scene preloaderScene;
     private ProgressBar bar;

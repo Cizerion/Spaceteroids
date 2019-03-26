@@ -5,6 +5,12 @@ import spaceteroids.game_structure.Positioning;
 import spaceteroids.game_structure.Visualisation;
 import spaceteroids.sprite_shapes.Sprite;
 
+/**
+ * Class describes animation of sprites.
+ * 
+ * @author Stanislav Shergin
+ *
+ */
 public class AnimatedSprite implements Positioning, Visualisation{
 	private Sprite[] frames;
 	private double duration;
@@ -21,29 +27,48 @@ public class AnimatedSprite implements Positioning, Visualisation{
 		frames = new Sprite[collection.length];
 		duration = 0.100;
 		startTime = 0;
-		
-		for(int i = 0; i < collection.length; i++) // Or System.arraycopy(collection, 0, frames, 0, collection.length);
-			frames[i] = collection[i]; 
+		for(int i = 0; i < collection.length; i++) {
+			frames[i] = collection[i];
+		} 
 	}
 	
+	/**
+	 * Returns frame linked with current time.
+	 * 
+	 * @param time - current time from any timer.
+	 * @return frame with index linked with time parameter.
+	 */
 	public Sprite getFrame(double time) {
 		int index = (int)((time % (frames.length * duration))/duration);
 		return frames[index];
 	}
 	
+	/**
+	 * Returns each frame only once.
+	 * 
+	 * @param time - current time from any timer.
+	 * @return frame with index linked with time parameter.
+	 */
 	public Sprite getFrameEachOnce(double time) {
 		int index = (int)((time % (frames.length * duration))/duration);
 		if((index > (frames.length - 2)) && (frames[index] != null)) {
-			for(int i = 0; i < frames.length; i++) 
+			for(int i = 0; i < frames.length; i++) {
 				frames[i].setNullImage();
+			}
 		}
 		return frames[index];
 	}
 	
+	/**
+	 * Sets frames based on existing sprite collection.
+	 * 
+	 * @param collection - existing sprite collection.
+	 */
 	public void setFrameSequence(Sprite [] collection) {
 		frames = new Sprite[collection.length];
-		for(int i = 0; i < collection.length; i++) 
+		for(int i = 0; i < collection.length; i++) {
 			frames[i] = collection[i];
+		}
 	}
 	
 	public double getWidth() {
@@ -55,8 +80,9 @@ public class AnimatedSprite implements Positioning, Visualisation{
 	}
 	
 	public void setPosition(double x, double y) {
-		for(Sprite t: frames)
+		for(Sprite t: frames) {
 			t.setPosition(x, y);
+		}
 	}
 	
 	public double getPositionX() {
@@ -68,8 +94,9 @@ public class AnimatedSprite implements Positioning, Visualisation{
 	}
 	
 	public void setVelocity(double x, double y) {
-		for(int i = 0; i < frames.length; i++)
+		for(int i = 0; i < frames.length; i++) {
 			frames[i].setVelocity(x, y);
+		}
 	}
 	
 	public double getVelocityX() {
@@ -94,9 +121,10 @@ public class AnimatedSprite implements Positioning, Visualisation{
 	}
 	
 	public void update(double time) {
-		for(int i = 0; i < frames.length; i++)
+		for(int i = 0; i < frames.length; i++) {
 			frames[i].setPosition(frames[i].getPositionX() + frames[i].getVelocityX() * time, 
 					frames[i].getPositionY() + frames[i].getVelocityY() * time);
+		}
 	}
 	public void decreaseHealth() {
 		health -= 25;
@@ -118,10 +146,27 @@ public class AnimatedSprite implements Positioning, Visualisation{
 		frames[frameIndex] = new Sprite(imgUrl);
 	}
 	
-	public void setTime(double time) {startTime = time;}
-	public double getTime() {return startTime;}
-	public void setDuration(double d) {duration = d;}
-	public double getDuration() {return duration;}
-	public int getHealth() {return health;}
-	public void setHealth(int hlth) {health = hlth;}
+	public void setTime(double time) {
+		startTime = time;
+	}
+	
+	public double getTime() {
+		return startTime;
+	}
+	
+	public void setDuration(double d) {
+		duration = d;
+	}
+	
+	public double getDuration() {
+		return duration;
+	}
+	
+	public int getHealth() {
+		return health;
+	}
+	
+	public void setHealth(int hlth) {
+		health = hlth;
+	}
 }

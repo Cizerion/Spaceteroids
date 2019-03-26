@@ -2,7 +2,7 @@ package spaceteroids.game_structure;
 
 public class SimpleTypeWrapper {
 	private int iValue;
-	private boolean bValue;
+	private volatile boolean bValue;
 	private double dValue;
 	private long lValue;
 	

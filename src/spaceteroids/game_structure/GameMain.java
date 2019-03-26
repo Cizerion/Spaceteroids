@@ -9,6 +9,7 @@ import java.io.ObjectOutputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import com.sun.javafx.application.LauncherImpl;
 import javafx.animation.AnimationTimer;
@@ -50,32 +51,41 @@ import spaceteroids.entity_generators.BangBuffer;
 import spaceteroids.entity_generators.Boosts;
 import spaceteroids.sprite_shapes.Sprite;
 
+/**
+ * Main class of game "Spaceteroids". Here is described render and update logic of entities,
+ * game menu with components, game animation with entities, event handlers for all components and
+ * win or lose logic.
+ * 
+ * @author Stanislav Shergin
+ *
+ */
 public class GameMain extends Application {
-	
+	// application window width and height
 	private static final double WIDTH = 582;
 	private static final double HEIGHT = 582;
-	private static final String gameVersion = "v3.2 - 03.2019";
-	private double enemyEntityCount = 5;
-	private double checkTimerCap = 217;
+	// version of the game
+	private static final String gameVersion = "v3.3 - 03.2019";
+	private double enemyEntityCount;
+	private double checkTimerCap;
 	private Stage gameStage;
 	private SimpleTypeWrapper score;
 	private SimpleTypeWrapper gameTime;
 	private SimpleTypeWrapper checkTimer;
 	private SimpleTypeWrapper bossStage;
-	private ArrayList<AnimatedSprite> smallAsteroidList;
-	private ArrayList<AnimatedSprite> mediumAsteroidList;
-	private ArrayList<AnimatedSprite> largeAsteroidList;
-	private ArrayList<ASEnemySpaceship> enemies;
-	private ArrayList<ASBoss> boss;
-	private ArrayList<String> input;
-	private ArrayList<Sprite> laserTempList;
-	private ArrayList<Sprite> heartBoostList;
-	private ArrayList<AnimatedSprite> bangList;
-	private ArrayList<AnimatedSprite> bangTempList;
-	private ArrayList<AnimatedSprite> bigBangList;
-	private ArrayList<AnimatedSprite> bigBangTempList;
-	private ArrayList<AnimatedSprite> hitList;
-	private ArrayList<AnimatedSprite> hitTempList;
+	private List<AnimatedSprite> smallAsteroidList;
+	private List<AnimatedSprite> mediumAsteroidList;
+	private List<AnimatedSprite> largeAsteroidList;
+	private List<ASEnemySpaceship> enemies;
+	private List<ASBoss> boss;
+	private List<String> input;
+	private List<Sprite> laserTempList;
+	private List<Sprite> heartBoostList;
+	private List<AnimatedSprite> bangList;
+	private List<AnimatedSprite> bangTempList;
+	private List<AnimatedSprite> bigBangList;
+	private List<AnimatedSprite> bigBangTempList;
+	private List<AnimatedSprite> hitList;
+	private List<AnimatedSprite> hitTempList;
 	private ASSpaceship ship;
 	private Sprite levelProgressBar;
 	private Sprite shipProgressBar;
@@ -85,12 +95,10 @@ public class GameMain extends Application {
 	private CollisionDetection gameCollision;
 	@SuppressWarnings("unused")
 	private BangBuffer bangBuf;
-	private long wait;
-	private String command;
-	
+	private String consoleCommand;
 	private ScoreBoard[] sb;
 	private GameStatus gameStatus;
-	
+	// All group components are below
 	private FlowPane labels;
 	private Label lbActivityTime;
 	private Label lbElapsedTime;
@@ -99,6 +107,7 @@ public class GameMain extends Application {
 	private Label lbTests2;
 	private Label lbScore;
 	private Text menuText;
+	private Text versionView;
 	private VBox menuButtons;
 	private Button newGameButton;
 	private Button optionsButton;
@@ -115,6 +124,13 @@ public class GameMain extends Application {
 	private MediaPlayer losePlayer;
 	private MediaPlayer winPlayer;
 	
+	/**
+	 * Draws level progress bar with tiny spaceship.
+	 * 
+	 * @param gc - GraphicsContext where to draw level progress bar and spaceship marker.
+	 * @param checkTimer - current level progress time.
+	 * @param checkTimerCap - maximum level progress time.
+	 */
 	public void drawLevelProgress(GraphicsContext gc, double checkTimer, double checkTimerCap) {
 		if(!(boss.isEmpty() || gameStatus.equals(GameStatus.AFTER_WIN))) {
 			shipProgressBar.setPosition(79 + (checkTimer * (360 / checkTimerCap)), 521);
@@ -123,13 +139,22 @@ public class GameMain extends Application {
 		}
 	}
 	
+	/**
+	 * Sets score label position.
+	 * 
+	 * @param posX - position by axis X.
+	 * @param posY - position by axis Y.
+	 */
 	public void setLabelScorePosition(int posX, int posY) {
 		lbScore.setLayoutX(posX);
 		lbScore.setLayoutY(posY);
 	}
 	
+	/**
+	 * Resets level. All components are reinitialized to their default state.
+	 */
 	public void levelCleanup() {
-		command = "";
+		consoleCommand = "";
 		setLabelScorePosition(380, 20);
 		bossStage.setBooleanValue(false);
 		gameCollision.cleanupCollision(0d, enemyEntityCount);
@@ -187,11 +212,17 @@ public class GameMain extends Application {
 		Asteroids.regenerateRandomAsteroids(largeAsteroidList, (int)(enemyEntityCount / 5), "large", (4 * WIDTH), 0, (2 * WIDTH), HEIGHT);
 	}
 	
+	/**
+	 * Loads score board when it calls. If file "score.txt" is not created, 
+	 * or corrupted or has size less than 80, this method creates new file with
+	 * name "score.txt" with appropriate text filling.
+	 */
 	public void loadScoreBoard() {
 		File txt = new File("score.txt");
 		if(txt.length() <= 80) {
-			for(int i = 0; i < sb.length; i++)
+			for(int i = 0; i < sb.length; i++) {
 				sb[i] = new ScoreBoard("--------", 0);
+			}
 			try(FileOutputStream f = new FileOutputStream(txt);
 			    ObjectOutput s = new ObjectOutputStream(f)) {
 				s.writeObject(sb);
@@ -206,8 +237,9 @@ public class GameMain extends Application {
 			try {
 				txt.delete();
 				txt.createNewFile();
-				for(int i = 0; i < sb.length; i++)
+				for(int i = 0; i < sb.length; i++) {
 					sb[i] = new ScoreBoard("--------", 0);
+				}
 				try(FileOutputStream f = new FileOutputStream(txt);
 				    ObjectOutput s = new ObjectOutputStream(f)) {
 					s.writeObject(sb);
@@ -221,12 +253,20 @@ public class GameMain extends Application {
 		}
 	}
 	
+	/**
+	 * Writes score to file "score.txt" with linked name.
+	 * 
+	 * @param name - players name.
+	 */
 	public void saveScore(String name) {
 		loadScoreBoard();
-		if(name.equals("") || name.equals(" ")) sb[10].setName(">LazyMan<");
-		else sb[10].setName(name);
+		if(name.equals("") || name.equals(" ")) {
+			sb[10].setName(">LazyMan<");
+		} else {
+			sb[10].setName(name);
+		}
 		sb[10].setScore(score.getIntValue());
-		for(int i = 0; i < sb.length; i++)
+		for(int i = 0; i < sb.length; i++)// bubble sort
 			for(int j = 0; j < sb.length - 1; j++) {
 				if(sb[j].getIntScore() < sb[j+1].getIntScore()) {
 					String nameSB = sb[j].getName();
@@ -245,7 +285,15 @@ public class GameMain extends Application {
 		}
 	}
 	
-	public void restart(Group game, AnimationTimer gameAnimation, MediaPlayer before, MediaPlayer after) {
+	/**
+	 * Restarts the game after lose where it was called.
+	 * 
+	 * @param game - Group with components.
+	 * @param gameAnimation - current AnimationTimer.
+	 * @param before - MediaPlayer played before lose.
+	 * @param after - MediaPlayer which should be played after lose.
+	 */
+	public void restartAfterLose(Group game, AnimationTimer gameAnimation, MediaPlayer before, MediaPlayer after) {
 		try {
 			gameAnimation.stop();
 			gameCollision.stopCollision();
@@ -274,14 +322,15 @@ public class GameMain extends Application {
 				gamePlayer.play();
 				gameStatus = GameStatus.START;
 			});
-			
+			// sets limit to text field
 			final int LIMIT = 10;
-			
 			nicknameField.lengthProperty().addListener(new ChangeListener<Number>() {
 	            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-	                if (newValue.intValue() > oldValue.intValue()) // Check if the new character is greater than LIMIT
-	                    if (nicknameField.getText().length() >= LIMIT) // if it's 11th character then just setText to previous one
+	                if (newValue.intValue() > oldValue.intValue()) { // Check if the new character is greater than LIMIT
+	                    if (nicknameField.getText().length() >= LIMIT) { // if it's 11th character then just setText to previous one
 	                    	nicknameField.setText(nicknameField.getText().substring(0, LIMIT));
+	                    }
+	                }
 	            }
 			});
 			
@@ -305,6 +354,15 @@ public class GameMain extends Application {
 		}
 	}
 	
+	/**
+	 * Restarts the game after win where it was called.
+	 * 
+	 * @param game - Group with components.
+	 * @param gameAnimation - current AnimationTimer.
+	 * @param gameMenu - menu AnimationTimer.
+	 * @param current - current playing MediaPlayer.
+	 * @param menuScene - menu Scene.
+	 */
 	public void restartAfterWin(Group game, AnimationTimer gameAnimation, AnimationTimer gameMenu, MediaPlayer current, Scene menuScene) {
 		try {
 			gameCollision.stopCollision();
@@ -336,14 +394,15 @@ public class GameMain extends Application {
 				gamePlayer.play();
 				gameStatus = GameStatus.START;
 			});
-			
+			// sets limit to text field
 			final int LIMIT = 10;
-			
 			nicknameField.lengthProperty().addListener(new ChangeListener<Number>() {
 	            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-	                if (newValue.intValue() > oldValue.intValue()) // Check if the new character is greater than LIMIT
-	                    if (nicknameField.getText().length() >= LIMIT) // if it's 11th character then just setText to previous one
+	                if (newValue.intValue() > oldValue.intValue()) { // Check if the new character is greater than LIMIT
+	                    if (nicknameField.getText().length() >= LIMIT) { // if it's 11th character then just setText to previous one
 	                    	nicknameField.setText(nicknameField.getText().substring(0, LIMIT));
+	                    }
+	                }
 	            }
 			});
 			
@@ -385,19 +444,22 @@ public class GameMain extends Application {
 	}
         
     public void init() throws Exception{
-		int count = 0;
-		int stages = 10;
+		int preloaderStagesCount = 0;
+		int preloaderStages = 10;
 		
 		// set game status
 		gameStatus = GameStatus.BEFORE_FIRST_START;
 		
-		//counter for laser sprites
-		wait = 0;
-		
 		// input storage
 		input = new ArrayList<String>();
+		
+		// scoreboard and console command storage
 		sb = new ScoreBoard[11];
-		command = "";
+		consoleCommand = "";
+		
+		// starting enemies count and level timer for events
+		enemyEntityCount = 5;
+		checkTimerCap = 217;
 		
 		// pane with labels
 		labels = new FlowPane(Orientation.VERTICAL);
@@ -410,10 +472,13 @@ public class GameMain extends Application {
 		lbScore = new Label("Score: 0");
 		lbScore.setId("score");
 		setLabelScorePosition(380, 20);
-		LauncherImpl.notifyPreloader(this, new Preloader.ProgressNotification((100 * ++count) / stages));
+		LauncherImpl.notifyPreloader(this, new Preloader.ProgressNotification((100 * ++preloaderStagesCount) / preloaderStages));
 		
 		menuText = new Text(30, 80, "SP/ACE\\TEROIDS");
 		menuText.setId("gamename");
+		
+		versionView = new Text(WIDTH - 125, HEIGHT - 50, gameVersion);
+		versionView.setId("gametext");
 		
 		// pane with control buttons
 		menuButtons = new VBox();
@@ -437,16 +502,17 @@ public class GameMain extends Application {
 		backButton.setLayoutY(120);
 				
 		menuButtons.getChildren().addAll(newGameButton, optionsButton, scoreboardButton, controlsButton, aboutButton, exitButton);
-		LauncherImpl.notifyPreloader(this, new Preloader.ProgressNotification((100 * ++count) / stages));
+		LauncherImpl.notifyPreloader(this, new Preloader.ProgressNotification((100 * ++preloaderStagesCount) / preloaderStages));
 		
+		// entities initialization
 		smallAsteroidList = Asteroids.generateRandomAsteroids((int)(enemyEntityCount), "small", WIDTH, 0, (2 * WIDTH), HEIGHT);
-		LauncherImpl.notifyPreloader(this, new Preloader.ProgressNotification((100 * ++count) / stages));
+		LauncherImpl.notifyPreloader(this, new Preloader.ProgressNotification((100 * ++preloaderStagesCount) / preloaderStages));
 		
 		mediumAsteroidList = Asteroids.generateRandomAsteroids((int)(enemyEntityCount / 3), "medium", (2 * WIDTH), 0, (2 * WIDTH), HEIGHT);
-		LauncherImpl.notifyPreloader(this, new Preloader.ProgressNotification((100 * ++count) / stages));
+		LauncherImpl.notifyPreloader(this, new Preloader.ProgressNotification((100 * ++preloaderStagesCount) / preloaderStages));
 		
 		largeAsteroidList = Asteroids.generateRandomAsteroids((int)(enemyEntityCount / 5), "large", (4 * WIDTH), 0, (2 * WIDTH), HEIGHT);
-		LauncherImpl.notifyPreloader(this, new Preloader.ProgressNotification((100 * ++count) / stages));
+		LauncherImpl.notifyPreloader(this, new Preloader.ProgressNotification((100 * ++preloaderStagesCount) / preloaderStages));
         
 		enemies = ASEnemySpaceship.generateEnemySpaceships((int)(enemyEntityCount / 1.5), 50, WIDTH, 0, (2 * WIDTH), HEIGHT);
 		boss = ASBoss.generateBoss(1, 500, 850, 225);
@@ -461,19 +527,20 @@ public class GameMain extends Application {
 		hitTempList = new ArrayList<AnimatedSprite>();
 		laserTempList = new ArrayList<Sprite>();
 		bangBuf = new BangBuffer(bangTempList, bigBangTempList, laserTempList, hitTempList);
-		LauncherImpl.notifyPreloader(this, new Preloader.ProgressNotification((100 * ++count) / stages));
+		LauncherImpl.notifyPreloader(this, new Preloader.ProgressNotification((100 * ++preloaderStagesCount) / preloaderStages));
 		
         // create spaceship
 		ship = new ASSpaceship(100);
+		// initialization of level progress bar
 		levelProgressBar = new Sprite("images/progressbar/pb2.png", 100, 527, 0, 0);
 	    shipProgressBar = new Sprite("images/ship/fff1-min.png", 42, 18, true, true, 79, 521, 0, 0);
-        LauncherImpl.notifyPreloader(this, new Preloader.ProgressNotification((100 * ++count) / stages));
+        LauncherImpl.notifyPreloader(this, new Preloader.ProgressNotification((100 * ++preloaderStagesCount) / preloaderStages));
         
         score = new SimpleTypeWrapper(0);
      	gameTime = new SimpleTypeWrapper();
      	checkTimer = new SimpleTypeWrapper(0d);
      	bossStage = new SimpleTypeWrapper(false);
-     	LauncherImpl.notifyPreloader(this, new Preloader.ProgressNotification((100 * ++count) / stages));
+     	LauncherImpl.notifyPreloader(this, new Preloader.ProgressNotification((100 * ++preloaderStagesCount) / preloaderStages));
      	
      	URL sound = getClass().getResource("/sounds/music/Beyond the Stars (Ambient).mp3");
      	menuPlayer = new MediaPlayer(new Media(sound.toString()));
@@ -494,13 +561,13 @@ public class GameMain extends Application {
 		gamePlayer = new MediaPlayer(new Media(sound.toString()));
 		gamePlayer.setCycleCount(MediaPlayer.INDEFINITE);
 		gameView = new MediaView(gamePlayer);
-		LauncherImpl.notifyPreloader(this, new Preloader.ProgressNotification((100 * ++count) / stages));
+		LauncherImpl.notifyPreloader(this, new Preloader.ProgressNotification((100 * ++preloaderStagesCount) / preloaderStages));
 		
 		space = new LoopableBackground("images/backgrounds/space4.png", -100, -100, -2, 0);
 		stars = new LoopableBackground("images/backgrounds/22.png", -100, -100, -4, 0);
 		fastStars = new LoopableBackground("images/backgrounds/44.png", -100, -100, -6, 0);
 		gameCollision = new CollisionDetection();
-		LauncherImpl.notifyPreloader(this, new Preloader.ProgressNotification((100 * ++count) / stages));
+		LauncherImpl.notifyPreloader(this, new Preloader.ProgressNotification((100 * ++preloaderStagesCount) / preloaderStages));
     }
     
     public void start(Stage primaryStage) throws Exception{
@@ -518,7 +585,8 @@ public class GameMain extends Application {
 		menuScene.getStylesheets().add((getClass().getResource("/styles.css")).toExternalForm());
 		Canvas menuCanvas = new Canvas(WIDTH, HEIGHT);
 		
-		menu.getChildren().addAll(menuCanvas, menuButtons, menuText, menuView);
+		// add all to menu node
+		menu.getChildren().addAll(menuCanvas, menuButtons, menuText, menuView, versionView);
 		
 		// game group
 		Group game = new Group();
@@ -564,27 +632,37 @@ public class GameMain extends Application {
 					fastStars.update(0.06);
 				}
 				
-				for(AnimatedSprite tempAsteroid: smallAsteroidList)  
+				for(AnimatedSprite tempAsteroid: smallAsteroidList) {
 					tempAsteroid.render(time, gcMenu);
-				for(AnimatedSprite tempAsteroid: mediumAsteroidList)
+				}
+				for(AnimatedSprite tempAsteroid: mediumAsteroidList) {
 					tempAsteroid.render(time, gcMenu);
-				for(AnimatedSprite tempAsteroid: largeAsteroidList)
+				}
+				for(AnimatedSprite tempAsteroid: largeAsteroidList) {
 					tempAsteroid.render(time, gcMenu);
-				for(Sprite tempBoost: heartBoostList)
+				}
+				for(Sprite tempBoost: heartBoostList) {
 					tempBoost.render(gcMenu);
-				for(ASBoss bossTemp: boss)
+				}
+				for(ASBoss bossTemp: boss) {
 					bossTemp.render(time, gcMenu);
-				for(AnimatedSprite tempBang: bangList)
+				}
+				for(AnimatedSprite tempBang: bangList) {
 					tempBang.getFrame((gameTime.getDoubleValue() + time) - tempBang.getTime()).render(gcMenu);
-				for(AnimatedSprite tempBang: bigBangList)
+				}
+				for(AnimatedSprite tempBang: bigBangList) {
 					tempBang.getFrame((gameTime.getDoubleValue() + time) - tempBang.getTime()).render(gcMenu);
-				for(ASEnemySpaceship tempEnemy: enemies)
+				}
+				for(ASEnemySpaceship tempEnemy: enemies) {
 					tempEnemy.render(time, gcMenu);
-				for(AnimatedSprite tempHit: hitList)
+				}
+				for(AnimatedSprite tempHit: hitList) {
 					tempHit.getFrame((gameTime.getDoubleValue() + time) - tempHit.getTime()).render(gcMenu);
+				}
 				ship.render(time, gcMenu);
 			}
 		};
+		// menu starts first
 		gameMenu.start();
 				
 		// game animation
@@ -592,10 +670,13 @@ public class GameMain extends Application {
 			double framesPerSecond = 0;
 			long lastNanoTime = System.nanoTime();
 			
-			// show frames per second 
+			/**
+			 * Shows frames per second.
+			 * 
+			 * @param currentTime - time of each frame.
+			 */
 			public void frameRate(long currentTime) {
 				double elapsedTime = (currentTime - lastNanoTime)/1000000000.0;
-				
 				lbElapsedTime.setText("Elapsed time: " + elapsedTime);
 				
 				++framesPerSecond;					
@@ -610,28 +691,32 @@ public class GameMain extends Application {
 			public void handle(long currentNanoTime) {
 				double time = (currentNanoTime - startNanoTime)/1000000000d;
 				gameTime.setDoubleValue(time);
-				wait++;
+				frameRate(currentNanoTime);
 				
-				if(laserTempList.size() == 0) lbTests2.setText("Reloading!");
-				else if(input.contains("SPACE")) lbTests2.setText("Firing!");
-				else lbTests2.setText("Waiting commands!");
+				// labels changes
+				if(laserTempList.size() == 0) {
+					lbTests2.setText("Reloading!");
+				} else if(input.contains("SPACE")) {
+					lbTests2.setText("Firing!");
+				} else {
+					lbTests2.setText("Waiting commands!");
+				}
 				lbActivityTime.setText("Activity time: " + time);
 				lbEEntities.setText("Enemy entities: SA " + smallAsteroidList.size() +
 						" MA " + mediumAsteroidList.size() + " LA " + largeAsteroidList.size() + " E " + enemies.size());
 				
 				// collision start
 				if(collisionStart.getBooleanValue()) {
-					gameCollision.setParams(WIDTH, HEIGHT, enemyEntityCount, score, checkTimer, smallAsteroidList, mediumAsteroidList, largeAsteroidList, heartBoostList, 
+					gameCollision.setParams(WIDTH, HEIGHT, enemyEntityCount, score, checkTimer, bossStage, smallAsteroidList, mediumAsteroidList, largeAsteroidList, heartBoostList, 
 							ship.getLaserList(), bangList, bangTempList, bigBangList, bigBangTempList, hitList, hitTempList, startNanoTime, ship, boss, enemies);
 					gameCollision.start();
 					collisionStart.setBooleanValue(false);
+				}		
+								
+				// ship controls for environment effects
+				if(!(gameStatus.equals(GameStatus.END_OF_GAME))) {
+					ship.setVelocity(0, 0);
 				}
-								
-				frameRate(currentNanoTime);
-								
-				// ship controls and environment effects
-				if(!(gameStatus.equals(GameStatus.END_OF_GAME))) ship.setVelocity(0, 0);
-				
 				if(!(bossStage.getBooleanValue())) {
 					space.setVelocity(-2, 0);
 					stars.setVelocity(-4, 0);
@@ -646,15 +731,19 @@ public class GameMain extends Application {
 				Asteroids.setDefaultAsteroidVelocity(largeAsteroidList, time);
 				Boosts.setBoostsVelocity(heartBoostList, -33, 0);
 				ASEnemySpaceship.setDefaultEnemyVelocity(enemies);
-				for(Sprite tempLaser: ship.getLaserList()) 
+				for(Sprite tempLaser: ship.getLaserList()) {
 					tempLaser.setVelocity(150, 0);
+				}
 				if(!(bossStage.getBooleanValue())) {
-					for(AnimatedSprite tempBang: bangList)
+					for(AnimatedSprite tempBang: bangList) {
 						tempBang.setVelocity(-66, 0);
-					for(AnimatedSprite tempBang: bigBangList)
+					}
+					for(AnimatedSprite tempBang: bigBangList) {
 						tempBang.setVelocity(-66, 0);
-					for(AnimatedSprite tempHit: hitList)
+					}
+					for(AnimatedSprite tempHit: hitList) {
 						tempHit.setVelocity(20, 0);
+					}
 				}
 
 				// ship controls
@@ -664,27 +753,36 @@ public class GameMain extends Application {
 						space.addVelocity(-2, 0);
 						stars.addVelocity(-4, 0);
 						fastStars.addVelocity(-6, 0);
-						for(AnimatedSprite asteroidTemp: smallAsteroidList) 
+						for(AnimatedSprite asteroidTemp: smallAsteroidList) {
 							asteroidTemp.addVelocity(-6, 0);
-						for(AnimatedSprite asteroidTemp: mediumAsteroidList) 
+						}
+						for(AnimatedSprite asteroidTemp: mediumAsteroidList) {
 							asteroidTemp.addVelocity(-6, 0);
-						for(AnimatedSprite asteroidTemp: largeAsteroidList) 
+						}
+						for(AnimatedSprite asteroidTemp: largeAsteroidList) {
 							asteroidTemp.addVelocity(-6, 0);
-						for(Sprite boostTemp: heartBoostList) 
+						}
+						for(Sprite boostTemp: heartBoostList) {
 							boostTemp.addVelocity(-6, 0);
-						for(AnimatedSprite tempBang: bangList) 
+						}
+						for(AnimatedSprite tempBang: bangList) {
 							tempBang.addVelocity(-6, 0);
-						for(AnimatedSprite tempBang: bigBangList) 
+						}
+						for(AnimatedSprite tempBang: bigBangList) {
 							tempBang.addVelocity(-6, 0);
-						for(AnimatedSprite tempHit: hitList)
+						}
+						for(AnimatedSprite tempHit: hitList) {
 							tempHit.addVelocity(6, 0);
+						}
 						for(ASEnemySpaceship tempEnemy: enemies) {
 							tempEnemy.addVelocity(-6, 0);
-							for(Sprite tempLaser: tempEnemy.getLaserList())
+							for(Sprite tempLaser: tempEnemy.getLaserList()) {
 								tempLaser.addVelocity(-6, 0);
+							}
 						}
-						for(Sprite tempLaser: ship.getLaserList()) 
+						for(Sprite tempLaser: ship.getLaserList()) {
 							tempLaser.addVelocity(-6, 0);
+						}
 					}
 				}
 				if((input.contains("A") || input.contains("LEFT")) && !(gameStatus.equals(GameStatus.END_OF_GAME) || gameStatus.equals(GameStatus.AFTER_WIN))) {
@@ -693,27 +791,36 @@ public class GameMain extends Application {
 						space.addVelocity(4, 0);
 						stars.addVelocity(8, 0);
 						fastStars.addVelocity(12, 0);
-						for(AnimatedSprite asteroidTemp: smallAsteroidList) 
+						for(AnimatedSprite asteroidTemp: smallAsteroidList) {
 							asteroidTemp.addVelocity(12, 0);
-						for(AnimatedSprite asteroidTemp: mediumAsteroidList) 
+						}
+						for(AnimatedSprite asteroidTemp: mediumAsteroidList) {
 							asteroidTemp.addVelocity(12, 0);
-						for(AnimatedSprite asteroidTemp: largeAsteroidList) 
+						}
+						for(AnimatedSprite asteroidTemp: largeAsteroidList) {
 							asteroidTemp.addVelocity(12, 0);
-						for(Sprite boostTemp: heartBoostList) 
+						}
+						for(Sprite boostTemp: heartBoostList) {
 							boostTemp.addVelocity(12, 0);
-						for(AnimatedSprite tempBang: bangList) 
+						}
+						for(AnimatedSprite tempBang: bangList) {
 							tempBang.addVelocity(12, 0);
-						for(AnimatedSprite tempBang: bigBangList) 
+						}
+						for(AnimatedSprite tempBang: bigBangList) {
 							tempBang.addVelocity(12, 0);
-						for(AnimatedSprite tempHit: hitList)
+						}
+						for(AnimatedSprite tempHit: hitList) {
 							tempHit.addVelocity(-12, 0);
+						}
 						for(ASEnemySpaceship tempEnemy: enemies) {
 							tempEnemy.addVelocity(12, 0);
-							for(Sprite tempLaser: tempEnemy.getLaserList())
+							for(Sprite tempLaser: tempEnemy.getLaserList()) {
 								tempLaser.addVelocity(12, 0);
+							}
 						}
-						for(Sprite tempLaser: ship.getLaserList()) 
+						for(Sprite tempLaser: ship.getLaserList()) {
 							tempLaser.addVelocity(12, 0);
+						}
 					}
 				}
 				if((input.contains("W") || input.contains("UP")) && !(gameStatus.equals(GameStatus.END_OF_GAME) || gameStatus.equals(GameStatus.AFTER_WIN))) {
@@ -722,27 +829,36 @@ public class GameMain extends Application {
 						space.addVelocity(0, 3);
 						stars.addVelocity(0, 6);
 						fastStars.addVelocity(0, 9);
-						for(AnimatedSprite asteroidTemp: smallAsteroidList) 
+						for(AnimatedSprite asteroidTemp: smallAsteroidList) {
 							asteroidTemp.addVelocity(0, 9);
-						for(AnimatedSprite asteroidTemp: mediumAsteroidList) 
+						}
+						for(AnimatedSprite asteroidTemp: mediumAsteroidList) {
 							asteroidTemp.addVelocity(0, 9);
-						for(AnimatedSprite asteroidTemp: largeAsteroidList) 
+						}
+						for(AnimatedSprite asteroidTemp: largeAsteroidList) {
 							asteroidTemp.addVelocity(0, 9);
-						for(Sprite boostTemp: heartBoostList) 
+						}
+						for(Sprite boostTemp: heartBoostList) {
 							boostTemp.addVelocity(0, 9);
-						for(AnimatedSprite tempBang: bangList) 
+						}
+						for(AnimatedSprite tempBang: bangList) {
 							tempBang.addVelocity(0, 9);
-						for(AnimatedSprite tempBang: bigBangList) 
+						}
+						for(AnimatedSprite tempBang: bigBangList) {
 							tempBang.addVelocity(0, 9);
-						for(AnimatedSprite tempHit: hitList)
+						}
+						for(AnimatedSprite tempHit: hitList) {
 							tempHit.addVelocity(0, 9);
+						}
 						for(ASEnemySpaceship tempEnemy: enemies) {
 							tempEnemy.addVelocity(0, 9);
-							for(Sprite tempLaser: tempEnemy.getLaserList())
+							for(Sprite tempLaser: tempEnemy.getLaserList()) {
 								tempLaser.addVelocity(0, 9);
+							}
 						}
-						for(Sprite tempLaser: ship.getLaserList()) 
+						for(Sprite tempLaser: ship.getLaserList()) {
 							tempLaser.addVelocity(0, 9);
+						}
 					}
 				}
 				if((input.contains("S") || input.contains("DOWN")) && !(gameStatus.equals(GameStatus.END_OF_GAME) || gameStatus.equals(GameStatus.AFTER_WIN))) {
@@ -751,27 +867,36 @@ public class GameMain extends Application {
 						space.addVelocity(0, -3);
 						stars.addVelocity(0, -6);
 						fastStars.addVelocity(0, -9);
-						for(AnimatedSprite asteroidTemp: smallAsteroidList) 
+						for(AnimatedSprite asteroidTemp: smallAsteroidList) {
 							asteroidTemp.addVelocity(0, -9);
-						for(AnimatedSprite asteroidTemp: mediumAsteroidList) 
+						}
+						for(AnimatedSprite asteroidTemp: mediumAsteroidList) {
 							asteroidTemp.addVelocity(0, -9);
-						for(AnimatedSprite asteroidTemp: largeAsteroidList) 
+						}
+						for(AnimatedSprite asteroidTemp: largeAsteroidList) {
 							asteroidTemp.addVelocity(0, -9);
-						for(Sprite boostTemp: heartBoostList) 
+						}
+						for(Sprite boostTemp: heartBoostList) {
 							boostTemp.addVelocity(0, -9);
-						for(AnimatedSprite tempBang: bangList) 
+						}
+						for(AnimatedSprite tempBang: bangList) {
 							tempBang.addVelocity(0, -9);
-						for(AnimatedSprite tempBang: bigBangList) 
+						}
+						for(AnimatedSprite tempBang: bigBangList) {
 							tempBang.addVelocity(0, -9);
-						for(AnimatedSprite tempHit: hitList)
+						}
+						for(AnimatedSprite tempHit: hitList) {
 							tempHit.addVelocity(0, -9);
+						}
 						for(ASEnemySpaceship tempEnemy: enemies) {
 							tempEnemy.addVelocity(0, -9);
-							for(Sprite tempLaser: tempEnemy.getLaserList())
+							for(Sprite tempLaser: tempEnemy.getLaserList()) {
 								tempLaser.addVelocity(0, -9);
+							}
 						}
-						for(Sprite tempLaser: ship.getLaserList()) 
+						for(Sprite tempLaser: ship.getLaserList()) {
 							tempLaser.addVelocity(0, -9);
+						}
 					}
 				}
 				// check bounds of window sides and corners for ship
@@ -787,15 +912,19 @@ public class GameMain extends Application {
 							Asteroids.setDefaultAsteroidVelocity(mediumAsteroidList, time);
 							Asteroids.setDefaultAsteroidVelocity(largeAsteroidList, time);
 							Boosts.setBoostsVelocity(heartBoostList, -33, 0);
-							for(AnimatedSprite tempBang: bangList) 
+							for(AnimatedSprite tempBang: bangList) {
 								tempBang.setVelocity(-66, 0);
-							for(AnimatedSprite tempBang: bigBangList) 
+							}
+							for(AnimatedSprite tempBang: bigBangList) {
 								tempBang.setVelocity(-66, 0);
-							for(AnimatedSprite tempHit: hitList)
+							}
+							for(AnimatedSprite tempHit: hitList) {
 								tempHit.setVelocity(20, 0);
+							}
 							ASEnemySpaceship.setDefaultEnemyVelocity(enemies);
-							for(Sprite tempLaser: ship.getLaserList()) 
+							for(Sprite tempLaser: ship.getLaserList()) {
 								tempLaser.setVelocity(150, 0);
+							}
 						}
 					}
 					else if(ship.getFrame(time).getPositionX() <= -15) {
@@ -808,15 +937,19 @@ public class GameMain extends Application {
 							Asteroids.setDefaultAsteroidVelocity(mediumAsteroidList, time);
 							Asteroids.setDefaultAsteroidVelocity(largeAsteroidList, time);
 							Boosts.setBoostsVelocity(heartBoostList, -33, 0);
-							for(AnimatedSprite tempBang: bangList) 
+							for(AnimatedSprite tempBang: bangList) {
 								tempBang.setVelocity(-66, 0);
-							for(AnimatedSprite tempBang: bigBangList) 
+							}
+							for(AnimatedSprite tempBang: bigBangList) {
 								tempBang.setVelocity(-66, 0);
-							for(AnimatedSprite tempHit: hitList)
+							}
+							for(AnimatedSprite tempHit: hitList) {
 								tempHit.setVelocity(20, 0);
+							}
 							ASEnemySpaceship.setDefaultEnemyVelocity(enemies);
-							for(Sprite tempLaser: ship.getLaserList()) 
+							for(Sprite tempLaser: ship.getLaserList()) {
 								tempLaser.setVelocity(150, 0);
+							}
 						}
 					}
 					else if(ship.getFrame(time).getPositionY() <= 0) {
@@ -825,27 +958,36 @@ public class GameMain extends Application {
 							space.addVelocity(0, -3);
 							stars.addVelocity(0, -6);
 							fastStars.addVelocity(0, -9);
-							for(AnimatedSprite asteroidTemp: smallAsteroidList) 
+							for(AnimatedSprite asteroidTemp: smallAsteroidList) {
 								asteroidTemp.addVelocity(0, -9);
-							for(AnimatedSprite asteroidTemp: mediumAsteroidList) 
+							}
+							for(AnimatedSprite asteroidTemp: mediumAsteroidList) {
 								asteroidTemp.addVelocity(0, -9);
-							for(AnimatedSprite asteroidTemp: largeAsteroidList) 
+							}
+							for(AnimatedSprite asteroidTemp: largeAsteroidList) {
 								asteroidTemp.addVelocity(0, -9);
-							for(Sprite boostTemp: heartBoostList) 
+							}
+							for(Sprite boostTemp: heartBoostList) {
 								boostTemp.addVelocity(0, -9);
-							for(AnimatedSprite tempBang: bangList) 
+							}
+							for(AnimatedSprite tempBang: bangList) {
 								tempBang.addVelocity(0, -9);
-							for(AnimatedSprite tempBang: bigBangList) 
+							}
+							for(AnimatedSprite tempBang: bigBangList) {
 								tempBang.addVelocity(0, -9);
-							for(AnimatedSprite tempHit: hitList)
+							}
+							for(AnimatedSprite tempHit: hitList) {
 								tempHit.addVelocity(0, -9);
+							}
 							for(ASEnemySpaceship tempEnemy: enemies) {
 								tempEnemy.addVelocity(0, -9);
-								for(Sprite tempLaser: tempEnemy.getLaserList())
+								for(Sprite tempLaser: tempEnemy.getLaserList()) {
 									tempLaser.addVelocity(0, -9);
+								}
 							}
-							for(Sprite tempLaser: ship.getLaserList()) 
+							for(Sprite tempLaser: ship.getLaserList()) {
 								tempLaser.addVelocity(0, -9);
+							}
 						}
 					}
 					else if(ship.getFrame(time).getPositionY() >= (HEIGHT - 68)) {
@@ -854,27 +996,36 @@ public class GameMain extends Application {
 							space.addVelocity(0, 3);
 							stars.addVelocity(0, 6);
 							fastStars.addVelocity(0, 9);
-							for(AnimatedSprite asteroidTemp: smallAsteroidList) 
+							for(AnimatedSprite asteroidTemp: smallAsteroidList) {
 								asteroidTemp.addVelocity(0, 9);
-							for(AnimatedSprite asteroidTemp: mediumAsteroidList) 
+							}
+							for(AnimatedSprite asteroidTemp: mediumAsteroidList) {
 								asteroidTemp.addVelocity(0, 9);
-							for(AnimatedSprite asteroidTemp: largeAsteroidList) 
+							}
+							for(AnimatedSprite asteroidTemp: largeAsteroidList) {
 								asteroidTemp.addVelocity(0, 9);
-							for(Sprite boostTemp: heartBoostList) 
+							}
+							for(Sprite boostTemp: heartBoostList) {
 								boostTemp.addVelocity(0, 9);
-							for(AnimatedSprite tempBang: bangList) 
+							}
+							for(AnimatedSprite tempBang: bangList) {
 								tempBang.addVelocity(0, 9);
-							for(AnimatedSprite tempBang: bigBangList) 
+							}
+							for(AnimatedSprite tempBang: bigBangList) {
 								tempBang.addVelocity(0, 9);
-							for(AnimatedSprite tempHit: hitList)
+							}
+							for(AnimatedSprite tempHit: hitList) {
 								tempHit.addVelocity(0, 9);
+							}
 							for(ASEnemySpaceship tempEnemy: enemies) {
 								tempEnemy.addVelocity(0, 9);
-								for(Sprite tempLaser: tempEnemy.getLaserList())
+								for(Sprite tempLaser: tempEnemy.getLaserList()) {
 									tempLaser.addVelocity(0, 9);
+								}
 							}
-							for(Sprite tempLaser: ship.getLaserList()) 
+							for(Sprite tempLaser: ship.getLaserList()) {
 								tempLaser.addVelocity(0, 9);
+							}
 						}
 					}
 					// window corners check for ship 
@@ -884,27 +1035,36 @@ public class GameMain extends Application {
 							space.addVelocity(2, 3);
 							stars.addVelocity(4, 6);
 							fastStars.addVelocity(6, 9);
-							for(AnimatedSprite asteroidTemp: smallAsteroidList) 
+							for(AnimatedSprite asteroidTemp: smallAsteroidList) {
 								asteroidTemp.addVelocity(6, 0);
-							for(AnimatedSprite asteroidTemp: mediumAsteroidList) 
+							}
+							for(AnimatedSprite asteroidTemp: mediumAsteroidList) {
 								asteroidTemp.addVelocity(6, 0);
-							for(AnimatedSprite asteroidTemp: largeAsteroidList) 
+							}
+							for(AnimatedSprite asteroidTemp: largeAsteroidList) {
 								asteroidTemp.addVelocity(6, 0);
-							for(Sprite boostTemp: heartBoostList) 
+							}
+							for(Sprite boostTemp: heartBoostList) {
 								boostTemp.addVelocity(6, 0);
-							for(AnimatedSprite tempBang: bangList) 
+							}
+							for(AnimatedSprite tempBang: bangList) {
 								tempBang.addVelocity(6, 0);
-							for(AnimatedSprite tempBang: bigBangList) 
+							}
+							for(AnimatedSprite tempBang: bigBangList) {
 								tempBang.addVelocity(6, 0);
-							for(AnimatedSprite tempHit: hitList)
+							}
+							for(AnimatedSprite tempHit: hitList) {
 								tempHit.addVelocity(-6, 0);
+							}
 							for(ASEnemySpaceship tempEnemy: enemies) {
 								tempEnemy.addVelocity(6, 0);
-								for(Sprite tempLaser: tempEnemy.getLaserList())
+								for(Sprite tempLaser: tempEnemy.getLaserList()) {
 									tempLaser.addVelocity(6, 0);
+								}
 							}
-							for(Sprite tempLaser: ship.getLaserList()) 
+							for(Sprite tempLaser: ship.getLaserList()) {
 								tempLaser.addVelocity(6, 0);
+							}
 						}
 					} else if(ship.getFrame(time).getPositionY() >= (HEIGHT - 68) && ship.getFrame(time).getPositionX() <= -15) { // left bottom
 						ship.addVelocity(150, -150);
@@ -912,27 +1072,36 @@ public class GameMain extends Application {
 							space.addVelocity(-4, 3);
 							stars.addVelocity(-8, 6);
 							fastStars.addVelocity(-12, 9);
-							for(AnimatedSprite asteroidTemp: smallAsteroidList) 
+							for(AnimatedSprite asteroidTemp: smallAsteroidList) {
 								asteroidTemp.addVelocity(-12, 0);
-							for(AnimatedSprite asteroidTemp: mediumAsteroidList) 
+							}
+							for(AnimatedSprite asteroidTemp: mediumAsteroidList) {
 								asteroidTemp.addVelocity(-12, 0);
-							for(AnimatedSprite asteroidTemp: largeAsteroidList) 
+							}
+							for(AnimatedSprite asteroidTemp: largeAsteroidList) {
 								asteroidTemp.addVelocity(-12, 0);
-							for(Sprite boostTemp: heartBoostList) 
+							}
+							for(Sprite boostTemp: heartBoostList) {
 								boostTemp.addVelocity(-12, 0);
-							for(AnimatedSprite tempBang: bangList) 
+							}
+							for(AnimatedSprite tempBang: bangList) {
 								tempBang.addVelocity(-12, 0);
-							for(AnimatedSprite tempBang: bigBangList) 
+							}
+							for(AnimatedSprite tempBang: bigBangList) {
 								tempBang.addVelocity(-12, 0);
-							for(AnimatedSprite tempHit: hitList)
+							}
+							for(AnimatedSprite tempHit: hitList) {
 								tempHit.addVelocity(12, 0);
+							}
 							for(ASEnemySpaceship tempEnemy: enemies) {
 								tempEnemy.addVelocity(-12, 0);
-								for(Sprite tempLaser: tempEnemy.getLaserList())
+								for(Sprite tempLaser: tempEnemy.getLaserList()) {
 									tempLaser.addVelocity(-12, 0);
+								}
 							}
-							for(Sprite tempLaser: ship.getLaserList()) 
+							for(Sprite tempLaser: ship.getLaserList()) {
 								tempLaser.addVelocity(-12, 0);
+							}
 						}
 					} else if(ship.getFrame(time).getPositionX() <= -15 && ship.getFrame(time).getPositionY() <= 0) { // left top
 						ship.addVelocity(150, 150);
@@ -940,27 +1109,36 @@ public class GameMain extends Application {
 							space.addVelocity(-4, -3);
 							stars.addVelocity(-8, -6);
 							fastStars.addVelocity(-12, -9);
-							for(AnimatedSprite asteroidTemp: smallAsteroidList) 
+							for(AnimatedSprite asteroidTemp: smallAsteroidList) {
 								asteroidTemp.addVelocity(-12, 0);
-							for(AnimatedSprite asteroidTemp: mediumAsteroidList) 
+							}
+							for(AnimatedSprite asteroidTemp: mediumAsteroidList) {
 								asteroidTemp.addVelocity(-12, 0);
-							for(AnimatedSprite asteroidTemp: largeAsteroidList) 
+							}
+							for(AnimatedSprite asteroidTemp: largeAsteroidList) {
 								asteroidTemp.addVelocity(-12, 0);
-							for(Sprite boostTemp: heartBoostList) 
+							}
+							for(Sprite boostTemp: heartBoostList) {
 								boostTemp.addVelocity(-12, 0);
-							for(AnimatedSprite tempBang: bangList) 
+							}
+							for(AnimatedSprite tempBang: bangList) {
 								tempBang.addVelocity(-12, 0);
-							for(AnimatedSprite tempBang: bigBangList) 
+							}
+							for(AnimatedSprite tempBang: bigBangList) {
 								tempBang.addVelocity(-12, 0);
-							for(AnimatedSprite tempHit: hitList)
+							}
+							for(AnimatedSprite tempHit: hitList) {
 								tempHit.addVelocity(12, 0);
+							}
 							for(ASEnemySpaceship tempEnemy: enemies) {
 								tempEnemy.addVelocity(-12, 0);
-								for(Sprite tempLaser: tempEnemy.getLaserList())
+								for(Sprite tempLaser: tempEnemy.getLaserList()) {
 									tempLaser.addVelocity(-12, 0);
+								}
 							}
-							for(Sprite tempLaser: ship.getLaserList()) 
+							for(Sprite tempLaser: ship.getLaserList()) {
 								tempLaser.addVelocity(-12, 0);
+							}
 						}
 					} else if(ship.getFrame(time).getPositionX() >= (WIDTH - 80) && ship.getFrame(time).getPositionY() <= 0) { // right top
 						ship.addVelocity(-150, 150);
@@ -968,39 +1146,47 @@ public class GameMain extends Application {
 							space.addVelocity(2, -3);
 							stars.addVelocity(4, -6);
 							fastStars.addVelocity(6, -9);
-							for(AnimatedSprite asteroidTemp: smallAsteroidList) 
+							for(AnimatedSprite asteroidTemp: smallAsteroidList) {
 								asteroidTemp.addVelocity(6, 0);
-							for(AnimatedSprite asteroidTemp: mediumAsteroidList) 
+							}
+							for(AnimatedSprite asteroidTemp: mediumAsteroidList) {
 								asteroidTemp.addVelocity(6, 0);
-							for(AnimatedSprite asteroidTemp: largeAsteroidList) 
+							}
+							for(AnimatedSprite asteroidTemp: largeAsteroidList) {
 								asteroidTemp.addVelocity(6, 0);
-							for(Sprite boostTemp: heartBoostList)
+							}
+							for(Sprite boostTemp: heartBoostList) {
 								boostTemp.addVelocity(6, 0);
-							for(AnimatedSprite tempBang: bangList) 
+							}
+							for(AnimatedSprite tempBang: bangList) {
 								tempBang.addVelocity(6, 0);
-							for(AnimatedSprite tempBang: bigBangList) 
+							}
+							for(AnimatedSprite tempBang: bigBangList) {
 								tempBang.addVelocity(6, 0);
-							for(AnimatedSprite tempHit: hitList)
+							}
+							for(AnimatedSprite tempHit: hitList) {
 								tempHit.addVelocity(-6, 0);
+							}
 							for(ASEnemySpaceship tempEnemy: enemies) {
 								tempEnemy.addVelocity(6, 0);
-								for(Sprite tempLaser: tempEnemy.getLaserList())
+								for(Sprite tempLaser: tempEnemy.getLaserList()) {
 									tempLaser.addVelocity(6, 0);
+								}
 							}
-							for(Sprite tempLaser: ship.getLaserList()) 
+							for(Sprite tempLaser: ship.getLaserList()) {
 								tempLaser.addVelocity(6, 0);
+							}
 						}
 					}
 				}
-				
 				// timer for game events
-				if(!(bossStage.getBooleanValue()) && !(gameStatus.equals(GameStatus.END_OF_GAME) || gameStatus.equals(GameStatus.AFTER_WIN)))
+				if(!(bossStage.getBooleanValue()) && !(gameStatus.equals(GameStatus.END_OF_GAME) || gameStatus.equals(GameStatus.AFTER_WIN))) {
 					checkTimer.setDoubleValue(checkTimer.getDoubleValue() + 0.02);
+				}
 				if(checkTimer.getDoubleValue() >= checkTimerCap && checkTimer.getDoubleValue() <= (checkTimerCap + 0.02)) {
 					checkTimer.setDoubleValue(checkTimer.getDoubleValue() + 0.04);
 					bossStage.setBooleanValue(true);
 				}
-				
 		        // render and update sprites
 				space.update(0.06);
 				space.render(gcGame);
@@ -1011,45 +1197,48 @@ public class GameMain extends Application {
 												
 				for(AnimatedSprite tempAsteroid: smallAsteroidList) {
 					tempAsteroid.update(0.06);
-					if(tempAsteroid.getPositionX() < (WIDTH + 50)) tempAsteroid.render(time, gcGame);
-				}
-								
+					if(tempAsteroid.getPositionX() < (WIDTH + 50)) {
+						tempAsteroid.render(time, gcGame);
+					}
+				}			
 				for(AnimatedSprite tempAsteroid: mediumAsteroidList) {
 					tempAsteroid.update(0.06);
-					if(tempAsteroid.getPositionX() < (WIDTH + 75)) tempAsteroid.render(time, gcGame);
+					if(tempAsteroid.getPositionX() < (WIDTH + 75)) {
+						tempAsteroid.render(time, gcGame);
+					}
 				}
-				
 				for(AnimatedSprite tempAsteroid: largeAsteroidList) {
 					tempAsteroid.update(0.06);
-					if(tempAsteroid.getPositionX() < (WIDTH + 150)) tempAsteroid.render(time, gcGame);
+					if(tempAsteroid.getPositionX() < (WIDTH + 150)) {
+						tempAsteroid.render(time, gcGame);
+					}
 				}
-				
 				for(Sprite tempBoost: heartBoostList) {
 					tempBoost.update(0.06);
-					if(tempBoost.getPositionX() < (WIDTH + 50)) tempBoost.render(gcGame);
+					if(tempBoost.getPositionX() < (WIDTH + 50)) {
+						tempBoost.render(gcGame);
+					}
 				}
-				
+				// start boss when boss stage began
 				if(bossStage.getBooleanValue()) {
 					gamePlayer.stop();
 					gameView.setMediaPlayer(bossPlayer);
 					bossPlayer.play();
-					for(ASBoss bossTemp: boss)
+					for(ASBoss bossTemp: boss) {
 						bossTemp.updateAndRender(time, gcGame, enemies, smallAsteroidList);
+					}
 				}
-				
 				for(AnimatedSprite tempBang: bangList) {
 					tempBang.update(0.06);
 					tempBang.getFrameEachOnce(time - tempBang.getTime()).render(gcGame);
 				}
-				
 				for(AnimatedSprite tempBigBang: bigBangList) {
 					tempBigBang.update(0.06);
 					tempBigBang.getFrameEachOnce(time - tempBigBang.getTime()).render(gcGame);
 				}
-				
-				for(ASEnemySpaceship tempEnemy: enemies)
+				for(ASEnemySpaceship tempEnemy: enemies) {
 					tempEnemy.updateAndRender(time, gcGame, WIDTH);
-				
+				}
 				for(AnimatedSprite tempHit: hitList) {
 					tempHit.update(0.06);
 					tempHit.getFrameEachOnce(time - tempHit.getTime()).render(gcGame);
@@ -1069,21 +1258,29 @@ public class GameMain extends Application {
 					bossStage.setBooleanValue(false);
 					gameStatus = GameStatus.END_OF_GAME;
 				} else if(ship.getHealth() <= 0) { // detect lose
-					if(bossStage.getBooleanValue()) restart(game, this, bossPlayer, losePlayer);
-					else restart(game, this, gamePlayer, losePlayer);
+					if(bossStage.getBooleanValue()) {
+						restartAfterLose(game, this, bossPlayer, losePlayer);
+					} else {
+						restartAfterLose(game, this, gamePlayer, losePlayer);
+					}
 					gameView.setMediaPlayer(losePlayer);
 					losePlayer.play();
 					lbScore.setText("     You lose!\nYour score: " + score.getIntValue());
 					setLabelScorePosition(186, 226);
-				} else if(!(gameStatus.equals(GameStatus.END_OF_GAME) || gameStatus.equals(GameStatus.AFTER_WIN))) lbScore.setText("Score: " + score.getIntValue()); // show score
-				else {
-					if(ship.getPositionX() > (WIDTH + 25) && !(gameStatus.equals(GameStatus.AFTER_WIN)))
+				} else if(!(gameStatus.equals(GameStatus.END_OF_GAME) || gameStatus.equals(GameStatus.AFTER_WIN))) {
+					lbScore.setText("Score: " + score.getIntValue()); // show score
+				} else {
+					if(ship.getPositionX() > (WIDTH + 25) && !(gameStatus.equals(GameStatus.AFTER_WIN))) {
 						restartAfterWin(game, this, gameMenu, winPlayer, menuScene);
+					}
 					if((int)ship.getPositionX() <= (WIDTH + 10)) {
 						ship.setVelocity(20, 0);				
 						if((int)ship.getPositionY() != 251){
-							if((int)ship.getPositionY() > 251) ship.setVelocity(0, -20);
-							else ship.setVelocity(0, 20);
+							if((int)ship.getPositionY() > 251) {
+								ship.setVelocity(0, -20);
+							} else {
+								ship.setVelocity(0, 20);
+							}
 						}
 					}
 				}
@@ -1094,34 +1291,38 @@ public class GameMain extends Application {
 		gameScene.setOnKeyPressed((ke) -> {
 			String keyCode = ke.getCode().toString();
 			if((input.contains("SPACE") || keyCode.equals("SPACE")) && !(gameStatus.equals(GameStatus.END_OF_GAME) || gameStatus.equals(GameStatus.AFTER_WIN))) {
-				if(wait >= 10) {
+				if(ship.firePermission()) {
 					if(!(laserTempList.isEmpty()) && ship.getLaserList().size() != laserTempList.size()) {
 						ship.addLaser(laserTempList);
-						wait = 0;
 					}
 				}
 			}
-			if(keyCode.equals("R") && !(gameStatus.equals(GameStatus.END_OF_GAME) || gameStatus.equals(GameStatus.AFTER_WIN)))
+			if(keyCode.equals("R") && !(gameStatus.equals(GameStatus.END_OF_GAME) || gameStatus.equals(GameStatus.AFTER_WIN))) {
 				ship.reloading(laserTempList);
+			}
 			if((keyCode.equals("M") || keyCode.equals("ESCAPE")) && gameStatus.equals(GameStatus.START)) {
 				gameAnimation.stop();
 				gameCollision.stopCollision();
-				if(bossStage.getBooleanValue()) bossPlayer.pause();
-				else gamePlayer.pause();
+				if(bossStage.getBooleanValue()) {
+					bossPlayer.pause();
+				} else {
+					gamePlayer.pause();
+				}
 				gameStage.setScene(menuScene);
 				gameMenu.start();
 				menuPlayer.play();
 				gameStatus = GameStatus.PAUSE;
 			}
-			if(!input.contains(keyCode))
+			if(!input.contains(keyCode)) {
 				input.add(keyCode);
+			}
 			});
 		
 		gameScene.setOnKeyReleased((ke) -> {
 				String keyCode = ke.getCode().toString();
 				input.remove(keyCode);
 			});
-		
+		// console view
 		Rectangle console = new Rectangle(-25, HEIGHT - 80, WIDTH + 50, 50);
 		TextField consoleField = new TextField();
 		consoleField.setPromptText("Console activated:");
@@ -1129,21 +1330,21 @@ public class GameMain extends Application {
 		consoleField.setMaxSize(WIDTH, 40);
 		consoleField.setId("console");
 		consoleField.setLayoutY(HEIGHT - 80);
-		
+		// console event handler
 		consoleField.setOnAction((ae) ->{
-			command = consoleField.getText();
-			switch(command) {
+			consoleCommand = consoleField.getText();
+			switch(consoleCommand) {
 			case "myparentsarethebest":
 				System.out.println("COMMAND ACCEPTED");
 				ship.setHealth(899999999);
-				command = "";
+				consoleCommand = "";
 				consoleField.clear();
 				menu.getChildren().removeAll(console, consoleField);
 				break;
 			case "myfriendsarethebest":
 				System.out.println("COMMAND ACCEPTED");
 				ship.setHealth(899999999);
-				command = "";
+				consoleCommand = "";
 				consoleField.clear();
 				menu.getChildren().removeAll(console, consoleField);
 				break;
@@ -1162,10 +1363,13 @@ public class GameMain extends Application {
 				gameStage.setScene(gameScene);	
 				gameAnimation.start();
 				gameCollision.startCollision();
-				if(bossStage.getBooleanValue()) bossPlayer.play();
-				else gamePlayer.play();
+				if(bossStage.getBooleanValue()) {
+					bossPlayer.play();
+				} else {
+					gamePlayer.play();
+				}
 				menu.getChildren().clear();
-				menu.getChildren().addAll(menuCanvas, menuButtons, menuText, menuView);
+				menu.getChildren().addAll(menuCanvas, menuButtons, menuText, menuView, versionView);
 				gameStatus = GameStatus.START;
 			}
 			if(!(menu.getChildren().contains(console)) && keyCode.equals("TAB")) {
@@ -1177,8 +1381,9 @@ public class GameMain extends Application {
 				menu.getChildren().removeAll(console, consoleField);
 				System.out.println("CONSOLE DISABLED");
 			}
-			if(!input.contains(keyCode))
+			if(!input.contains(keyCode)) {
 				input.add(keyCode);
+			}
 			});
 		
 		menuScene.setOnKeyReleased((ke) -> {
@@ -1200,8 +1405,9 @@ public class GameMain extends Application {
 				if(bossStage.getBooleanValue()) {
 					bossPlayer.stop();
 					gameView.setMediaPlayer(gamePlayer);
+				} else {
+					gamePlayer.stop();
 				}
-				else gamePlayer.stop();
 				levelCleanup();
 				gameMenu.stop();
 				menuPlayer.stop();
@@ -1232,7 +1438,7 @@ public class GameMain extends Application {
 			about.setTextAlignment(TextAlignment.JUSTIFY);
 			menu.getChildren().addAll(backButton, tip, about);
 			});
-		
+		// just an experiment with elements positioning. Better to use completed png picture with all elements instead.
 		controlsButton.setOnMouseClicked((me) -> {
 			menu.getChildren().remove(menuButtons);
 			Text tip = new Text(210, 148, controlsButton.getText());
@@ -1305,7 +1511,6 @@ public class GameMain extends Application {
 			
 			menu.getChildren().addAll(backButton, tip, nameView, scoreView);
 			});
-		
 		// set of checkboxes for menu -> options
 		CheckBox cb = new CheckBox("Show labels");
 		cb.setSelected(false);
@@ -1328,8 +1533,11 @@ public class GameMain extends Application {
 			cbOptions[i].setSelected(false);
 			cbOptions[i].setDisable(true);
 			cbOptions[i].setOnAction((ae) -> {
-				if(cbOptions[iter.getIntValue()].isSelected()) labels.getChildren().add(lbOptions[iter.getIntValue()]);
-				else labels.getChildren().remove(lbOptions[iter.getIntValue()]);
+				if(cbOptions[iter.getIntValue()].isSelected()) {
+					labels.getChildren().add(lbOptions[iter.getIntValue()]);
+				} else {
+					labels.getChildren().remove(lbOptions[iter.getIntValue()]);
+				}
 			});
 			options.getChildren().add(cbOptions[i]);
 		}
@@ -1337,13 +1545,15 @@ public class GameMain extends Application {
 		cb.setOnAction((ae) -> {
 				if(cb.isSelected()) {
 					game.getChildren().add(labels);
-					for(CheckBox t: cbOptions)
+					for(CheckBox t: cbOptions) {
 						t.setDisable(false);
+					}
 				}
 				else {
 					game.getChildren().remove(labels);
-					for(CheckBox t: cbOptions)
+					for(CheckBox t: cbOptions) {
 						t.setDisable(true);
+					}
 				}
 			});
 				
@@ -1359,7 +1569,7 @@ public class GameMain extends Application {
 		// return to menu screen
 		backButton.setOnMouseClicked((me) -> {
 			menu.getChildren().clear();
-			menu.getChildren().addAll(menuCanvas, menuButtons, menuText, menuView);
+			menu.getChildren().addAll(menuCanvas, menuButtons, menuText, menuView, versionView);
 			});
 				
 		exitButton.setOnAction(e -> {
