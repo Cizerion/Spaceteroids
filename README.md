@@ -21,7 +21,7 @@ Note: Before run i recomended to install Java 8 on your PC.
 I added runnable Spaceteroids.jar file so that now you can test this game without 
 building project. On OS Windows go to the command line, change directory 
 to one where Spaceteroids.jar file lies (using "cd" command) and type 
-"-java -jar Spaceteroids.jar", then press enter. Game should start.
+"java -jar Spaceteroids.jar", then press enter. Game should start.
 
 # Game controls
 
